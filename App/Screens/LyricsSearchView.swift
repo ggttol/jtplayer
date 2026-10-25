@@ -45,7 +45,6 @@ struct LyricsSearchView: View {
                     if let text = r.text, app.player.setLyrics(text) {
                         app.show("已使用这份歌词")
                         app.showLyrics = true
-                        app.showPlaylist = true
                     }
                     preview = nil
                     dismiss()

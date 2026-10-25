@@ -43,7 +43,8 @@ final class JTplayerUITests: XCTestCase {
         waitForState("播放中")
         app.buttons["暂停"].tap()
         waitForState("已暂停")
-        app.buttons["暂停"].tap()
+        // 播放和暂停共用一个位置：暂停后显示“播放”
+        app.buttons["播放"].tap()
         waitForState("播放中")
         let before = time.value as? String ?? ""
         app.buttons["下一首"].tap()
@@ -55,16 +56,16 @@ final class JTplayerUITests: XCTestCase {
 
     /// 均衡器预设与开关
     func testEqualizerPreset() {
-        app.launchArguments = ["-JTplayerReset", "YES"]
+        app.launchArguments = ["-JTplayerReset", "YES", "-jtplayer.showEQ", "YES"]
         app.launch()
-        app.buttons["预设"].tap()
-        app.buttons["Rock"].tap()
-        let band = app.otherElements["60 赫兹"].firstMatch
+        tapWhenReady(app.buttons["均衡器预设"])
+        tapWhenReady(app.buttons["Rock"])
+        let band = app.otherElements["31 赫兹"].firstMatch
         XCTAssertTrue(band.waitForExistence(timeout: 5))
-        XCTAssertEqual(band.value as? String, "+5.0 dB")
-        app.buttons["预设"].tap()
-        app.buttons["Flat"].tap()
-        XCTAssertEqual(band.value as? String, "+0.0 dB")
+        XCTAssertEqual(band.value as? String, "+5 dB")
+        tapWhenReady(app.buttons["均衡器预设"])
+        tapWhenReady(app.buttons["Flat"])
+        XCTAssertEqual(band.value as? String, "+0 dB")
     }
 
     /// 通过表单添加 WebDAV 来源 → 测试连接 → 保存 → 浏览 → 点歌播放
@@ -73,7 +74,7 @@ final class JTplayerUITests: XCTestCase {
         app.launch()
         app.buttons["菜单"].tap()
         tapWhenReady(app.buttons["menu.来源"])
-        tapWhenReady(app.buttons["添加"])
+        tapWhenReady(app.navigationBars.buttons["添加"])
         app.buttons["WebDAV / Alist / OpenList"].tap()
 
         let name = app.textFields["名称"]
@@ -133,7 +134,7 @@ final class JTplayerUITests: XCTestCase {
         let skinsItem = app.buttons["menu.皮肤"]
         for _ in 0..<4 where !skinsItem.waitForExistence(timeout: 1) { app.swipeUp() }
         tapWhenReady(skinsItem)
-        let builtIn = app.buttons.containing(NSPredicate(format: "label CONTAINS %@", "JTplayer Graphite")).firstMatch
+        let builtIn = app.buttons.containing(NSPredicate(format: "label CONTAINS %@", "静听蓝")).firstMatch
         XCTAssertTrue(builtIn.waitForExistence(timeout: 5))
         builtIn.tap()
         app.buttons["完成"].tap()
@@ -181,11 +182,11 @@ final class JTplayerUITests: XCTestCase {
         let firstNow = row("1. " + title)
         XCTAssertTrue(firstNow.waitForExistence(timeout: 5), "移到最前后第一行应是 \(title)")
 
-        // 切到歌词（第 1 首示例曲旁边有 .lrc 的那首正在播放时才有歌词；这里只验证清空后的状态）
-        app.buttons["切换到歌词"].tap()
-        tapWhenReady(app.buttons["删除曲目"])
+        // 打开歌词秀，清空列表后不再显示旧歌词
+        app.buttons["歌词秀"].firstMatch.tap()
+        tapWhenReady(app.buttons["删除"])
         tapWhenReady(app.buttons["清空列表"])
-        XCTAssertTrue(app.staticTexts["没有正在播放的歌曲"].waitForExistence(timeout: 5), "清空后歌词面板应提示没有正在播放的歌曲")
+        XCTAssertTrue(app.staticTexts["歌词秀"].waitForExistence(timeout: 5), "清空后歌词秀应回到空白状态")
     }
 
     /// 侧边菜单：定时关闭显示倒计时，取消后恢复“关”
@@ -204,15 +205,46 @@ final class JTplayerUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts["关"].waitForExistence(timeout: 5))
     }
 
-    /// 均衡器 AUTO 能打开和关闭
-    func testEqualizerAuto() {
+    /// 均衡器“开启”按钮能关掉和打开
+    func testEqualizerEnable() {
         app.launchArguments = ["-JTplayerReset", "YES", "-jtplayer.showEQ", "YES"]
         app.launch()
-        let auto = app.buttons["均衡器自动：关"]
-        tapWhenReady(auto)
-        XCTAssertTrue(app.buttons["均衡器自动：开"].waitForExistence(timeout: 3))
-        app.buttons["均衡器自动：开"].tap()
-        XCTAssertTrue(app.buttons["均衡器自动：关"].waitForExistence(timeout: 3))
+        tapWhenReady(app.buttons["均衡器：开"])
+        XCTAssertTrue(app.buttons["均衡器：关"].waitForExistence(timeout: 3))
+        app.buttons["均衡器：关"].tap()
+        XCTAssertTrue(app.buttons["均衡器：开"].waitForExistence(timeout: 3))
+    }
+
+    /// 播放模式按钮：五种模式依次切换，转一圈回到原来的
+    func testPlayModeCycle() {
+        app.launchArguments = ["-JTplayerReset", "YES"]
+        app.launch()
+        let mode = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "播放模式：")).firstMatch
+        waitFor(mode)
+        let first = mode.label
+        var seen: Set<String> = [first]
+        for _ in 0..<4 {
+            mode.tap()
+            Thread.sleep(forTimeInterval: 0.3)
+            seen.insert(mode.label)
+        }
+        XCTAssertEqual(seen.count, 5, "应有五种播放模式：\(seen)")
+        mode.tap()
+        XCTAssertEqual(mode.label, first)
+    }
+
+    /// 主窗口的 LRC / PL 按钮开关歌词秀和播放列表窗口
+    func testWindowToggles() {
+        app.launchArguments = ["-JTplayerReset", "YES", "-jtplayer.showPL", "YES", "-jtplayer.showLyrics", "YES"]
+        app.launch()
+        waitFor(app.buttons["关闭歌词秀"])
+        app.buttons["歌词秀"].firstMatch.tap()
+        XCTAssertFalse(app.buttons["关闭歌词秀"].waitForExistence(timeout: 1))
+        app.buttons["播放列表"].tap()
+        XCTAssertFalse(app.buttons["关闭播放列表"].waitForExistence(timeout: 1))
+        waitFor(app.staticTexts["歌词秀和播放列表已关闭"])
+        app.buttons["歌词秀"].firstMatch.tap()
+        XCTAssertTrue(app.buttons["关闭歌词秀"].waitForExistence(timeout: 3))
     }
 
     /// 扫描本机文件进曲库时读标签：艺术家页能看到 m4a 标签里的“测试艺术家”

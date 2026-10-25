@@ -2,8 +2,8 @@ import Foundation
 
 /// 10 段均衡器设置。增益单位 dB，范围 -12...+12（与经典播放器一致）。
 public struct EqualizerSettings: Codable, Sendable, Equatable {
-    public static let frequencies: [Float] = [60, 170, 310, 600, 1000, 3000, 6000, 12000, 14000, 16000]
-    public static let bandLabels = ["60", "170", "310", "600", "1K", "3K", "6K", "12K", "14K", "16K"]
+    public static let frequencies: [Float] = [31, 62, 125, 250, 500, 1000, 2000, 4000, 8000, 16000]
+    public static let bandLabels = ["31", "62", "125", "250", "500", "1K", "2K", "4K", "8K", "16K"]
     public static let range: ClosedRange<Float> = -12...12
 
     public var enabled: Bool

@@ -2,9 +2,12 @@ import Foundation
 
 public enum RepeatMode: String, Codable, Sendable, CaseIterable {
     case off, all, one
+    /// 播完当前这首就停
+    case single
 
     public var title: String {
         switch self {
+        case .single: "单曲播放"
         case .off: "顺序播放"
         case .all: "列表循环"
         case .one: "单曲循环"
@@ -146,6 +149,7 @@ public struct PlayQueue: Codable, Sendable, Equatable {
             return order.first
         }
         if auto && repeatMode == .one { return currentIndex }
+        if auto && repeatMode == .single { return nil }
         guard let pos = order.firstIndex(of: currentIndex) else { return order.first }
         if pos + 1 < order.count { return order[pos + 1] }
         return repeatMode == .off && auto ? nil : order.first
@@ -155,7 +159,7 @@ public struct PlayQueue: Codable, Sendable, Equatable {
         guard !tracks.isEmpty else { return nil }
         guard let currentIndex, let pos = order.firstIndex(of: currentIndex) else { return order.first }
         if pos > 0 { return order[pos - 1] }
-        return repeatMode == .off ? order.first : order.last
+        return repeatMode == .off || repeatMode == .single ? order.first : order.last
     }
 
     @discardableResult

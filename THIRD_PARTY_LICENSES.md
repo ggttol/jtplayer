@@ -25,9 +25,12 @@ https://monkeysaudio.com — Copyright 2000-2026 Matthew T. Ashland
 ## swift-atomics — Apache-2.0
 https://github.com/apple/swift-atomics — Copyright (c) Apple Inc.（AMSMB2 的依赖）
 
-## 默认皮肤与字体
-“Amplayer Graphite” 默认皮肤与 3x5 像素字体由本项目在 `DefaultSkin.swift` 中用代码原创绘制，未包含 Winamp 的任何素材。
-Amplayer 与 Winamp / Nullsoft / Llama Group 无关；用户导入的 .wsz 皮肤版权归原作者所有。
+## 内置皮肤与图标
+JTplayer 的 5 套内置皮肤（静听蓝、炫酷黑、樱花粉、翡翠绿、金属银）和 App 图标由本项目在 `TTSkin/BuiltInSkins.swift`、`Tools/make-icon.swift` 中用代码原创绘制，未包含千千静听的任何素材。
+`.skn` 格式（Skin.xml 各元素、四态按钮、LED 字形顺序、播放模式顺序）参考了社区公开的格式说明，没有复制任何代码。
+JTplayer 与千千静听、百度无关；用户导入的 .skn 皮肤版权归原作者所有。
+
+内核包里的 `AmplayerSkin` 模块来自姊妹项目 Amplayer（Winamp 皮肤，JTplayer 只用到其中的 ZIP 读取器），其中的 “Amplayer Graphite” 皮肤与像素字体同样为原创绘制。
 
 ## 测试素材
-`base-2.91.wsz` 等第三方皮肤仅在本地测试时使用（`Fixtures/local/` 或 `AMP_TEST_WSZ`），不入库、不随 App 分发。
+第三方 `.skn` / `.wsz` 皮肤仅在本地测试时使用（`Fixtures/local/`），不入库、不随 App 分发。

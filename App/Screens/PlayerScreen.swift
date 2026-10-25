@@ -2,7 +2,7 @@ import AmplayerKit
 import SwiftUI
 import UniformTypeIdentifiers
 
-/// 主界面：主窗口 + 均衡器 + 播放列表竖向排列，按屏宽等比放大
+/// 主界面：主控窗口在上，均衡器、歌词秀、播放列表依次吸附在下面，按屏宽等比放大
 struct PlayerScreen: View {
     @Environment(AppModel.self) private var app
     @Environment(\.scenePhase) private var scenePhase
@@ -10,24 +10,52 @@ struct PlayerScreen: View {
     var body: some View {
         @Bindable var app = app
         GeometryReader { geo in
-            // 按宽度放大；高度放不下（iPad 横屏）时按高度缩小，保证主窗口 + 均衡器 + 最矮的播放列表都在屏幕内
-            let windows: CGFloat = 116 * (app.showEqualizer ? 2 : 1) + (app.showPlaylist ? 116 : 0)
-            let scale = min(geo.size.width / 275, geo.size.height / windows)
-            let used = 116 * scale * (app.showEqualizer ? 2 : 1)
-            let playlistHeight = max(116, (geo.size.height - used) / scale)
+            let skin = app.skin
+            let doc = skin.document
+            let mainSize = skin.image(doc.player.image)?.size ?? CGSize(width: 330, height: 136)
+            // 皮肤缺哪个窗口，就用默认皮肤的那个窗口
+            let eqSkin = skin.image(doc.equalizer.image) != nil ? skin : TTSkinStore.fallback
+            let lyricSkin = skin.image(doc.lyric.image) != nil ? skin : TTSkinStore.fallback
+            let listSkin = skin.image(doc.playlist.image) != nil ? skin : TTSkinStore.fallback
+            let eqSize = eqSkin.image(eqSkin.document.equalizer.image)?.size ?? CGSize(width: 330, height: 134)
+            // 每个窗口按自己的宽度铺满屏宽：可拉伸的窗口拉到和主窗口一样宽，用主窗口的比例
+            let W = geo.size.width
+            let mainScale = W / mainSize.width
+            let lyricWidth = width(of: lyricSkin.document.lyric, in: lyricSkin, main: skin, mainWidth: mainSize.width)
+            let listWidth = width(of: listSkin.document.playlist, in: listSkin, main: skin, mainWidth: mainSize.width)
+            let eqScale = W / eqSize.width
+            let lower = app.showLyrics || app.showPlaylist
+            // 高度放不下（iPad 横屏）时整体缩小
+            let fixedHeight = mainSize.height * mainScale + (app.showEqualizer ? eqSize.height * eqScale : 0)
+            let fit = min(1, geo.size.height / (fixedHeight + (lower ? 160 : 0)))
+            let rest = max(0, geo.size.height - fixedHeight * fit)
+            let lyricScale = W / lyricWidth * fit, listScale = W / listWidth * fit
+            let lyricPoints = app.showLyrics ? (app.showPlaylist ? max(110, (rest * 0.4).rounded(.down)) : rest) : 0
+            let listPoints = app.showPlaylist ? max(110, rest - lyricPoints) : 0
             VStack(spacing: 0) {
-                MainWindowView()
-                if app.showEqualizer { EqualizerWindowView() }
+                MainPlayerWindow()
+                    .environment(\.ttScale, mainScale * fit)
+                if app.showEqualizer {
+                    EqualizerWindow()
+                        .environment(\.ttSkin, eqSkin)
+                        .environment(\.ttScale, eqScale * fit)
+                }
+                if app.showLyrics {
+                    LyricWindow(size: windowSize(lyricSkin, lyricSkin.document.lyric, width: lyricWidth, height: lyricPoints / lyricScale))
+                        .environment(\.ttSkin, lyricSkin)
+                        .environment(\.ttScale, lyricScale)
+                }
                 if app.showPlaylist {
-                    PlaylistWindowView(height: playlistHeight.rounded(.down))
-                } else {
+                    PlaylistWindow(size: windowSize(listSkin, listSkin.document.playlist, width: listWidth, height: listPoints / listScale))
+                        .environment(\.ttSkin, listSkin)
+                        .environment(\.ttScale, listScale)
+                }
+                if !lower {
                     ClosedWindowsHint().frame(maxHeight: .infinity)
                 }
             }
-            .frame(width: 275 * scale)
             .frame(maxWidth: .infinity)
-            .environment(\.skinScale, scale)
-            .environment(\.skin, app.skin)
+            .environment(\.ttSkin, skin)
         }
         .background(Color.black.ignoresSafeArea())
         .overlay { SideMenuView() }
@@ -37,7 +65,7 @@ struct PlayerScreen: View {
             case .sources: SourcesView()
             case .library: LibraryView()
             case .playlists: LibraryView(initialTab: .playlists)
-            case .skins: SkinsView()
+            case .skins: TTSkinsView()
             case .settings: SettingsView()
             case .effects: SoundEffectsView()
             }
@@ -62,11 +90,11 @@ struct ClosedWindowsHint: View {
 
     var body: some View {
         VStack(spacing: 10) {
-            Text(app.isMiniMode ? "迷你模式" : "播放列表已关闭").font(.footnote).foregroundStyle(.secondary)
+            Text(app.isMiniMode ? "迷你模式" : "歌词秀和播放列表已关闭").font(.footnote).foregroundStyle(.secondary)
             HStack(spacing: 10) {
                 if app.isMiniMode { Button("恢复窗口") { app.toggleMiniMode() } } else {
-                Button("显示播放列表") { app.showLyrics = false; app.showPlaylist = true }
-                Button("显示歌词") { app.showLyrics = true; app.showPlaylist = true }
+                Button("播放列表") { app.showPlaylist = true }
+                Button("歌词秀") { app.showLyrics = true }
                 if !app.showEqualizer { Button("均衡器") { app.showEqualizer = true } }
                 }
             }
@@ -79,6 +107,19 @@ struct ClosedWindowsHint: View {
 }
 
 extension PlayerScreen {
+    /// 窗口宽度（皮肤像素）：和主窗口同一套皮肤且可拉伸时与主窗口同宽，否则用窗口自己的宽度
+    func width(of window: TTWindow, in skin: TTSkin, main: TTSkin, mainWidth: CGFloat) -> CGFloat {
+        if skin === main, window.resizeRect != nil { return mainWidth }
+        return max(1, window.baseSize(imageSize: skin.image(window.image)?.size).width)
+    }
+
+    /// 可拉伸的窗口拉到和主窗口一样宽、填满给它的高度；不能拉伸的保持原尺寸
+    func windowSize(_ skin: TTSkin, _ window: TTWindow, width: CGFloat, height: CGFloat) -> CGSize {
+        let base = window.baseSize(imageSize: skin.image(window.image)?.size)
+        guard window.resizeRect != nil else { return base }
+        return CGSize(width: width, height: max(height, 60))
+    }
+
     /// 频谱只在前台且可视化开着时计算
     func updateAnalyzer() {
         app.player.audio.analyzer.isEnabled = scenePhase == .active && app.visualizerMode != .off

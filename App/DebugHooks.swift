@@ -6,7 +6,8 @@ import AmplayerKit
 /// -JTplayerReset YES         删除所有来源（本机除外）并清空播放列表，用于 UI 测试
 /// -JTplayerDemoPlay YES      把 Documents 里的音频加入播放列表并播放（-JTplayerPlayIndex N 从第 N 首开始，0 起）
 /// -JTplayerSheet <name>      打开 sources / library / skins / settings / menu
-/// -AmplayerSkin <name>       切换到指定名称的皮肤
+/// -JTplayerImportSkin <path> 导入一个 .skn
+/// -JTplayerSkin <name>       切换到指定名称的皮肤
 /// -JTplayerAddSource <base64>  添加一个来源（base64 编码的 SourceConfig JSON，可带 "password"；参数域会把 { 开头的值当 plist 解析，所以用 base64）
 /// -JTplayerPlaySource <name> 递归收集该来源的曲目并播放（-JTplayerPlayPath 指定起始目录）
 @MainActor
@@ -16,7 +17,7 @@ enum DebugHooks {
         if defaults.bool(forKey: "JTplayerReset") {
             for config in app.sources.configs where config.id != SourceConfig.localID { app.sources.remove(config.id) }
             app.player.clear()
-            app.skins.select(Skin.defaultSkin.id)
+            app.skins.select(TTSkinStore.defaultID)
         }
         if let encoded = defaults.string(forKey: "JTplayerAddSource"), let data = Data(base64Encoded: encoded),
            var config = try? JSONDecoder().decode(SourceConfig.self, from: data) {
@@ -26,7 +27,10 @@ enum DebugHooks {
             }
             app.sources.save(config, password: password)
         }
-        if let name = defaults.string(forKey: "AmplayerSkin"), let entry = app.skins.entries.first(where: { $0.name == name }) {
+        if let path = defaults.string(forKey: "JTplayerImportSkin") {
+            do { try app.skins.importSkin(from: URL(fileURLWithPath: path)) } catch { app.show("调试：导入皮肤失败 \(error)") }
+        }
+        if let name = defaults.string(forKey: "JTplayerSkin"), let entry = app.skins.entries.first(where: { $0.name == name }) {
             app.skins.select(entry.id)
         }
         if defaults.bool(forKey: "JTplayerDemoPlay") {

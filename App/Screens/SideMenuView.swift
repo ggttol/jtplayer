@@ -88,14 +88,11 @@ struct SideMenuView: View {
                 .accessibilityIdentifier("menu.音效")
                 Toggle(isOn: $app.showEqualizer) { Label("均衡器窗口", systemImage: "slider.vertical.3") }
             }
-            Section("播放顺序") {
-                Picker(selection: Binding(get: { app.player.repeatMode }, set: { app.player.repeatMode = $0 })) {
-                    ForEach(RepeatMode.allCases, id: \.self) { Text($0.title).tag($0) }
+            Section("播放") {
+                Picker(selection: Binding(get: { app.player.playMode }, set: { app.player.playMode = $0 })) {
+                    ForEach(PlayMode.allCases) { Text($0.title).tag($0) }
                 } label: {
-                    Label("循环", systemImage: app.player.repeatMode == .one ? "repeat.1" : "repeat")
-                }
-                Toggle(isOn: Binding(get: { app.player.shuffle }, set: { app.player.shuffle = $0 })) {
-                    Label("随机播放", systemImage: "shuffle")
+                    Label("播放模式", systemImage: app.player.playMode.symbol)
                 }
                 sleepTimer
                 HStack {
@@ -105,13 +102,8 @@ struct SideMenuView: View {
                 }
             }
             Section("窗口") {
-                Toggle(isOn: $app.showPlaylist) { Label("列表/歌词窗口", systemImage: "list.bullet.rectangle") }
-                Picker(selection: $app.showLyrics) {
-                    Text("播放列表").tag(false)
-                    Text("歌词").tag(true)
-                } label: {
-                    Label("窗口内容", systemImage: "quote.bubble")
-                }
+                Toggle(isOn: $app.showLyrics) { Label("歌词秀", systemImage: "quote.bubble") }
+                Toggle(isOn: $app.showPlaylist) { Label("播放列表", systemImage: "list.bullet.rectangle") }
                 Picker(selection: $app.visualizerMode) {
                     Text("频谱").tag(AppModel.VisualizerMode.spectrum)
                     Text("示波器").tag(AppModel.VisualizerMode.oscilloscope)

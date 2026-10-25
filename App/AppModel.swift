@@ -9,7 +9,7 @@ import SwiftUI
 final class AppModel {
     let sources = SourceStore()
     let library = LibraryStore()
-    let skins = SkinManager()
+    let skins = TTSkinStore()
     let discovery = LANDiscovery()
     let player: PlayerController
 
@@ -33,10 +33,17 @@ final class AppModel {
             if showPlaylist { miniRestore = nil }
         }
     }
+    /// 歌词秀窗口
+    var showLyrics: Bool {
+        didSet {
+            UserDefaults.standard.set(showLyrics, forKey: "jtplayer.showLyrics")
+            if showLyrics { miniRestore = nil }
+        }
+    }
+    /// 静音前的音量
+    var mutedVolume: Float?
     var visualizerMode: VisualizerMode { didSet { UserDefaults.standard.set(visualizerMode.rawValue, forKey: "jtplayer.vis") } }
     var showRemainingTime = false
-    /// 播放列表窗口改为显示歌词
-    var showLyrics: Bool { didSet { UserDefaults.standard.set(showLyrics, forKey: "jtplayer.showLyrics") } }
     /// 播放列表里选中的行（tracks 下标）
     var selection: Set<Int> = []
     /// 播放列表多选模式：开着时点行是勾选，否则点行直接播放
@@ -44,7 +51,7 @@ final class AppModel {
     var showSideMenu = false
 
     /// 迷你模式：只留主窗口；记住进入前哪些窗口开着
-    private var miniRestore: (eq: Bool, pl: Bool)?
+    private var miniRestore: (eq: Bool, pl: Bool, lrc: Bool)?
     var isMiniMode: Bool { miniRestore != nil }
 
     func toggleMiniMode() {
@@ -52,25 +59,33 @@ final class AppModel {
             miniRestore = nil
             showEqualizer = restore.eq
             showPlaylist = restore.pl
-        } else if showEqualizer || showPlaylist {
-            miniRestore = (showEqualizer, showPlaylist)
+            showLyrics = restore.lrc
+        } else if showEqualizer || showPlaylist || showLyrics {
+            let restore = (showEqualizer, showPlaylist, showLyrics)
             showEqualizer = false
             showPlaylist = false
+            showLyrics = false
+            miniRestore = restore
             show("迷你模式，再点一次恢复")
         } else {
-            showEqualizer = true
+            showLyrics = true
             showPlaylist = true
         }
     }
 
-    /// 标题栏“□”：换下一套皮肤
+    func toggleMute() {
+        if let v = mutedVolume {
+            player.volume = v
+            mutedVolume = nil
+        } else {
+            mutedVolume = player.volume
+            player.volume = 0
+        }
+    }
+
+    /// 换下一套皮肤
     func nextSkin() {
-        let entries = skins.entries
-        guard !entries.isEmpty else { return }
-        let i = entries.firstIndex { $0.id == skins.current.id } ?? -1
-        let next = entries[(i + 1) % entries.count]
-        skins.select(next.id)
-        show("皮肤：\(next.name)")
+        if let next = skins.next() { show("皮肤：\(next.name)") }
     }
 
     /// 退出多选并清空选择
@@ -83,7 +98,7 @@ final class AppModel {
 
     init() {
         let defaults = UserDefaults.standard
-        defaults.register(defaults: ["jtplayer.showEQ": true, "jtplayer.showPL": true])
+        defaults.register(defaults: ["jtplayer.showEQ": false, "jtplayer.showPL": true, "jtplayer.showLyrics": true])
         showEqualizer = defaults.bool(forKey: "jtplayer.showEQ")
         showPlaylist = defaults.bool(forKey: "jtplayer.showPL")
         showLyrics = defaults.bool(forKey: "jtplayer.showLyrics")
@@ -94,7 +109,7 @@ final class AppModel {
         Task { await AudioCache.shared.setLimit(limit) }
     }
 
-    var skin: Skin { skins.current }
+    var skin: TTSkin { skins.current }
 
     /// 首次启动：把内置示例曲（原创合成）放进“本机文件 › 示例 Demo”，播放列表为空时加进去（不自动播放）
     func installDemoContentIfNeeded() {
@@ -152,7 +167,7 @@ final class AppModel {
     /// 处理“用 JTplayer 打开”的文件：皮肤或播放列表
     func open(url: URL) {
         let ext = url.pathExtension.lowercased()
-        if ext == "wsz" || ext == "zip" {
+        if ext == "skn" || ext == "zip" {
             do {
                 let entry = try skins.importSkin(from: url)
                 show("已切换到皮肤 \(entry.name)")
