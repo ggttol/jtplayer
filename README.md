@@ -55,7 +55,7 @@ SMB, WebDAV and DLNA servers on the local network are discovered automatically.
 - MP3, AAC/M4A, ALAC, FLAC, APE (built-in Monkey's Audio decoder), WAV, AIFF, CAF and Opus (in CAF).
 - Gapless when the next track is cached and has the same format. Network tracks are cached before playback and can be downloaded for offline use.
 - Background audio, Lock Screen and Control Center, headset controls, sleep timer, AirPlay / Bluetooth output.
-- Lyrics come from a matching `.lrc` next to the song (UTF-8 or GBK), the server's lyrics API, embedded tags, or [LRCLIB](https://lrclib.net) as a fallback.
+- Lyrics come from a matching `.lrc` next to the song (UTF-8 or GBK), the server's lyrics API, embedded tags, or, as a fallback, online from [LRCLIB](https://lrclib.net), NetEase Cloud Music, QQ Music and Kugou (searched together; the closest synced match wins). Plain-text lyrics scroll along with playback.
 - When nothing is playing, the app is in the background or the visualizer is off, the UI stops redrawing and spectrum analysis stops; the audio engine sleeps after a short pause, so your phone stays cool.
 
 ## Try it

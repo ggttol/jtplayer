@@ -54,10 +54,14 @@ struct LyricWindow: View {
         if let lyrics = player.lyrics, !lyrics.lines.isEmpty {
             if lyrics.isSynced {
                 TimelineView(.periodic(from: .now, by: player.audio.state == .playing ? 0.25 : 60)) { _ in
-                    LyricLines(lyrics: lyrics, current: lyrics.index(at: player.audio.currentTime), style: style, fontSize: fontSize) { player.seek(to: $0) }
+                    let current = lyrics.index(at: player.audio.currentTime)
+                    LyricLines(lyrics: lyrics, current: current, follow: current, style: style, fontSize: fontSize) { player.seek(to: $0) }
                 }
             } else {
-                LyricLines(lyrics: lyrics, current: nil, style: style, fontSize: fontSize) { _ in }
+                // 纯文本歌词：按播放进度慢慢往下滚
+                TimelineView(.periodic(from: .now, by: player.audio.state == .playing ? 1 : 60)) { _ in
+                    LyricLines(lyrics: lyrics, current: nil, follow: estimatedLine(lyrics), style: style, fontSize: fontSize) { _ in }
+                }
             }
         } else {
             VStack(spacing: 6) {
@@ -84,6 +88,11 @@ struct LyricWindow: View {
         }
     }
 
+    private func estimatedLine(_ lyrics: Lyrics) -> Int? {
+        guard let duration = player.audio.info?.duration, duration > 0 else { return nil }
+        return lyrics.estimatedIndex(progress: player.audio.currentTime / duration)
+    }
+
     @ViewBuilder
     private var menu: some View {
         Button("在线搜索歌词…", systemImage: "magnifyingglass") { searching = true }
@@ -98,7 +107,10 @@ struct LyricWindow: View {
 
 private struct LyricLines: View {
     let lyrics: Lyrics
+    /// 高亮的行（只有同步歌词有）
     let current: Int?
+    /// 要滚到中间的行：同步歌词是当前行，纯文本是按进度估的行
+    let follow: Int?
     let style: TTLyricStyle
     let fontSize: CGFloat
     let onSeek: (TimeInterval) -> Void
@@ -132,18 +144,18 @@ private struct LyricLines: View {
                 }
                 .scrollIndicators(.hidden)
                 .onAppear { scroll(proxy, animated: false) }
-                .onChange(of: current) { _, _ in scroll(proxy, animated: true) }
+                .onChange(of: follow) { _, _ in scroll(proxy, animated: true) }
                 .onChange(of: lyrics) { _, _ in scroll(proxy, animated: false) }
             }
         }
     }
 
     private func scroll(_ proxy: ScrollViewProxy, animated: Bool) {
-        guard let current else { return }
+        guard let follow else { return }
         if animated {
-            withAnimation(.easeInOut(duration: 0.4)) { proxy.scrollTo(current, anchor: .center) }
+            withAnimation(.easeInOut(duration: current == nil ? 0.8 : 0.4)) { proxy.scrollTo(follow, anchor: .center) }
         } else {
-            proxy.scrollTo(current, anchor: .center)
+            proxy.scrollTo(follow, anchor: .center)
         }
     }
 }

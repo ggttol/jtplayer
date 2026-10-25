@@ -7,8 +7,8 @@ struct SettingsView: View {
     @AppStorage("jtplayer.cacheLimit") private var cacheLimit: Int = 2 * 1024 * 1024 * 1024
     @State private var usage: (cache: Int64, offline: Int64) = (0, 0)
     /// 和 PlayerController.onlineLyricsEnabled 是同一个键
-    @AppStorage("jtplayer.onlineLyrics") private var onlineLyrics = true
-    @AppStorage("jtplayer.simplifyLyrics") private var simplifyLyrics = true
+    @AppStorage("amplayer.onlineLyrics") private var onlineLyrics = true
+    @AppStorage("amplayer.simplifyLyrics") private var simplifyLyrics = true
 
     private let limits: [(String, Int)] = [
         ("500 MB", 500 * 1024 * 1024), ("1 GB", 1 << 30), ("2 GB", 2 << 30), ("5 GB", 5 << 30), ("10 GB", 10 << 30), ("20 GB", 20 << 30),
@@ -52,7 +52,7 @@ struct SettingsView: View {
                 } header: {
                     Text("歌词")
                 } footer: {
-                    Text("本地没有带时间轴的歌词时，把歌名、歌手、专辑和时长发给 LRCLIB（lrclib.net）查找。找到的歌词保存在本机。")
+                    Text("本地没有带时间轴的歌词时，把歌名、歌手和时长发给 LRCLIB、网易云音乐、QQ 音乐和酷狗查找。找到的歌词保存在本机。")
                 }
 
                 Section("支持的格式") {
