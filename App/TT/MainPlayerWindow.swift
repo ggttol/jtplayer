@@ -135,7 +135,7 @@ private struct TimeLED: View {
 
     var body: some View {
         let audio = app.player.audio
-        TimelineView(.periodic(from: .now, by: 0.5)) { context in
+        TimelineView(.periodic(from: .now, by: audio.state == .stopped ? 60 : 0.5)) { context in
             let duration = audio.info?.duration ?? 0
             let remaining = app.showRemainingTime && duration > 0
             let t = Int(remaining ? max(0, duration - audio.currentTime) : audio.currentTime)

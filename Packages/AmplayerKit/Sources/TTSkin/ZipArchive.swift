@@ -1,7 +1,7 @@
 import Compression
 import Foundation
 
-/// 极简 ZIP 读取器（仅支持 stored / deflate，足够解析 .wsz 皮肤包）
+/// 极简 ZIP 读取器（仅支持 stored / deflate，足够解析 .skn 皮肤包）
 public struct ZipArchive: Sendable {
     public struct Entry: Sendable {
         public var path: String

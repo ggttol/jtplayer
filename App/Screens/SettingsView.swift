@@ -98,12 +98,6 @@ struct LicensesView: View {
     static let text = """
     JTplayer 使用了以下开源软件：
 
-    Webamp（皮肤精灵图坐标与字体映射）
-    https://github.com/captbaritone/webamp
-    MIT License — Copyright (c) 2015 Jordan Eldredge
-
-    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
-
     AMSMB2（SMB 客户端，以动态库形式链接）
     https://github.com/amosavian/AMSMB2
     GNU Lesser General Public License v2.1 — Copyright (c) Amir Abbas Mousavian
@@ -123,7 +117,7 @@ struct LicensesView: View {
 
     按照 LGPL 的要求，你可以替换 AMSMB2.framework 为自行编译的版本；JTplayer 的源码修改与目标文件可应要求提供。
 
-    JTplayer 与 Winamp、Nullsoft、Llama Group 无关。经典皮肤的版权归各自作者所有。
+    JTplayer 是爱好者的致敬作品，与千千静听、百度无关。内置皮肤和图标为原创；导入的 .skn 皮肤版权归各自作者所有。
     """
 }
 

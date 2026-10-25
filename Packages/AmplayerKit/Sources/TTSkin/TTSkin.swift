@@ -1,4 +1,3 @@
-import AmplayerSkin
 import CoreGraphics
 import Foundation
 import ImageIO
@@ -135,6 +134,8 @@ public final class TTSkin: @unchecked Sendable, Identifiable {
     static func decodeImage(_ data: Data, transparent: TTColor) -> CGImage? {
         guard let source = CGImageSourceCreateWithData(data as CFData, nil),
               let image = CGImageSourceCreateImageAtIndex(source, 0, nil) else { return nil }
+        // 皮肤图都很小；异常大的图不加载，免得占满内存
+        guard image.width <= 4096, image.height <= 4096 else { return nil }
         let hasAlpha = ![.none, .noneSkipFirst, .noneSkipLast].contains(image.alphaInfo)
         let w = image.width, h = image.height
         guard let ctx = CGContext(data: nil, width: w, height: h, bitsPerComponent: 8, bytesPerRow: w * 4,

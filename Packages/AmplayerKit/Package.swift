@@ -13,7 +13,7 @@ let package = Package(
     ],
     targets: [
         // 汇总模块：App 只需 import AmplayerKit
-        .target(name: "AmplayerKit", dependencies: ["AmplayerCore", "AmplayerAudio", "AmplayerSources", "AmplayerCache", "AmplayerSkin", "TTSkin"]),
+        .target(name: "AmplayerKit", dependencies: ["AmplayerCore", "AmplayerAudio", "AmplayerSources", "AmplayerCache", "TTSkin"]),
         .target(name: "AmplayerCore"),
         .target(name: "AmplayerAudio", dependencies: ["AmplayerCore", "MonkeysAudio"]),
         // Monkey's Audio（APE）解码器，BSD-3-Clause，见 Sources/MonkeysAudio/vendor/License.txt
@@ -29,11 +29,10 @@ let package = Package(
         ),
         .target(name: "AmplayerSources", dependencies: ["AmplayerCore", .product(name: "AMSMB2", package: "AMSMB2")]),
         .target(name: "AmplayerCache", dependencies: ["AmplayerCore", "AmplayerSources"]),
-        .target(name: "AmplayerSkin", dependencies: ["AmplayerCore"]),
         // 千千静听式 .skn 皮肤：解析、加载、内置皮肤
-        .target(name: "TTSkin", dependencies: ["AmplayerSkin"]),
+        .target(name: "TTSkin"),
         .testTarget(name: "TTSkinTests", dependencies: ["TTSkin"]),
-        .testTarget(name: "AmplayerKitTests", dependencies: ["AmplayerKit", "AmplayerCore", "AmplayerAudio", "AmplayerSources", "AmplayerCache", "AmplayerSkin"]),
+        .testTarget(name: "AmplayerKitTests", dependencies: ["AmplayerKit", "AmplayerCore", "AmplayerAudio", "AmplayerSources", "AmplayerCache"]),
     ],
     cxxLanguageStandard: .cxx17
 )

@@ -128,7 +128,7 @@ private struct LyricLines: View {
                         }
                     }
                     // 上下留白，第一行和最后一行也能停在中间
-                    .padding(.vertical, lyrics.isSynced ? geo.size.height / 2 - fontSize : 8)
+                    .padding(.vertical, lyrics.isSynced ? max(8, geo.size.height / 2 - fontSize) : 8)
                 }
                 .scrollIndicators(.hidden)
                 .onAppear { scroll(proxy, animated: false) }

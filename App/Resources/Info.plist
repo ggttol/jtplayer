@@ -10,7 +10,7 @@
 	<array>
 		<dict>
 			<key>CFBundleTypeName</key>
-			<string>TTPlayer Skin</string>
+			<string>JTplayer Skin</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSHandlerRank</key>
@@ -115,7 +115,7 @@
 				<string>public.zip-archive</string>
 			</array>
 			<key>UTTypeDescription</key>
-			<string>TTPlayer Skin</string>
+			<string>JTplayer Skin</string>
 			<key>UTTypeIdentifier</key>
 			<string>dev.gaotao.jtplayer.skn</string>
 			<key>UTTypeTagSpecification</key>

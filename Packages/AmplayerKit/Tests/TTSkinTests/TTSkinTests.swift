@@ -148,6 +148,19 @@ struct TTSkinTests {
         }
     }
 
+    /// 本地放了真实 .skn（Fixtures/local，不入库）时逐个加载
+    @Test func loadsLocalSkins() throws {
+        let dir = URL(fileURLWithPath: #filePath).deletingLastPathComponent().appendingPathComponent("Fixtures/local")
+        let files = (try? FileManager.default.contentsOfDirectory(at: dir, includingPropertiesForKeys: nil))?.filter { $0.pathExtension.lowercased() == "skn" } ?? []
+        for url in files {
+            let skin = try TTSkin.load(sknData: Data(contentsOf: url), id: url.lastPathComponent)
+            #expect(skin.image(skin.document.player.image) != nil, "\(url.lastPathComponent) 主窗口背景")
+            for (name, e) in skin.document.player.elements where e.image != nil {
+                #expect(skin.image(e.image) != nil, "\(url.lastPathComponent) 缺 \(name) 的图 \(e.image ?? "")")
+            }
+        }
+    }
+
     @Test func fixesGBKZipNames() {
         let gbk = CFStringConvertEncodingToNSStringEncoding(CFStringEncoding(CFStringEncodings.GB_18030_2000.rawValue))
         let raw = "播放.bmp".data(using: String.Encoding(rawValue: gbk))!
