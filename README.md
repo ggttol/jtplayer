@@ -58,6 +58,10 @@ SMB, WebDAV and DLNA servers on the local network are discovered automatically.
 - Lyrics come from a matching `.lrc` next to the song (UTF-8 or GBK), the server's lyrics API, embedded tags, or [LRCLIB](https://lrclib.net) as a fallback.
 - When nothing is playing, the app is in the background or the visualizer is off, the UI stops redrawing and spectrum analysis stops; the audio engine sleeps after a short pause, so your phone stays cool.
 
+## Try it
+
+**TestFlight public beta**: https://testflight.apple.com/join/sKFPMY7Y . Install TestFlight on your iPhone and open the link. The App Store release is in review.
+
 ## Building
 
 1. A Mac with **Xcode 16 or later** and [XcodeGen](https://github.com/yonaskolb/XcodeGen) (`brew install xcodegen`). The app supports iOS 17 and later.

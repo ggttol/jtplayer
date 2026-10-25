@@ -58,6 +58,10 @@
 - 歌词依次从歌曲旁边的同名 `.lrc`（UTF-8 和 GBK 都行）、服务器歌词接口、文件内嵌歌词里找，都没有时在线查 [LRCLIB](https://lrclib.net)。
 - 不播放、在后台或关掉可视化时，界面停止刷新、不做频谱计算，暂停一会儿后音频引擎也会休眠，不会让手机发烫。
 
+## 试用
+
+**TestFlight 公开测试**：https://testflight.apple.com/join/sKFPMY7Y 。在 iPhone 上装好 TestFlight，打开链接就能安装。App Store 正式版正在审核中。
+
 ## 自己编译
 
 1. 需要一台 Mac，装好 **Xcode 16 或更高版本** 和 [XcodeGen](https://github.com/yonaskolb/XcodeGen)（`brew install xcodegen`）。App 支持 iOS 17 及以上。
