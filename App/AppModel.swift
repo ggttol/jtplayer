@@ -104,6 +104,9 @@ final class AppModel {
         showLyrics = defaults.bool(forKey: "jtplayer.showLyrics")
         visualizerMode = VisualizerMode(rawValue: defaults.integer(forKey: "jtplayer.vis")) ?? .spectrum
         player = PlayerController(sources: sources)
+        CarPlayHub.shared.player = player
+        CarPlayHub.shared.library = library
+        CarPlayHub.shared.sources = sources
         player.onTrackUpdated = { [weak library] track in library?.update(track) }
         let limit = defaults.object(forKey: "jtplayer.cacheLimit") as? Int64 ?? 2 * 1024 * 1024 * 1024
         Task { await AudioCache.shared.setLimit(limit) }

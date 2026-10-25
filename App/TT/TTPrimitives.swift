@@ -244,7 +244,8 @@ private struct Marquee: View {
         let cycle = textWidth + gap
         TimelineView(.animation(minimumInterval: 1.0 / 20, paused: !active)) { context in
             let speed = font.pointSize * 2.2
-            let offset = (context.date.timeIntervalSinceReferenceDate * speed).truncatingRemainder(dividingBy: cycle)
+            // 不滚动时从头显示，不要停在半截
+            let offset = active ? (context.date.timeIntervalSinceReferenceDate * speed).truncatingRemainder(dividingBy: cycle) : 0
             HStack(spacing: gap) {
                 Text(text).fixedSize()
                 Text(text).fixedSize()
