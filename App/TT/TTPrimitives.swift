@@ -1,5 +1,10 @@
 import AmplayerKit
 import SwiftUI
+
+extension Color {
+    /// JTplayer 的强调色：和默认皮肤一致的蓝
+    static let jtAccent = Color(red: 0.24, green: 0.56, blue: 0.98)
+}
 import UIKit
 
 // 皮肤坐标系：位置都用皮肤像素表示，乘以 ttScale 得到屏幕点。

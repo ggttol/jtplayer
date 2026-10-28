@@ -39,7 +39,7 @@ struct BrowserView: View {
                         .contextMenu { audioMenu(item) }
                         .swipeActions {
                             Button("加入") { enqueue([item]) }.tint(.green)
-                            Button("下一首") { app.player.playNext([item.makeTrack(sourceID: target.sourceID)]) }.tint(.orange)
+                            Button("下一首") { app.player.playNext([item.makeTrack(sourceID: target.sourceID)]) }.tint(.jtAccent)
                         }
                 }
             }

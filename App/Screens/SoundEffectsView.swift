@@ -80,16 +80,16 @@ struct SoundEffectsView: View {
             VStack(alignment: .leading, spacing: 6) {
                 Image(systemName: preset.symbol)
                     .font(.system(size: 20, weight: .semibold))
-                    .foregroundStyle(selected ? Color.black : Color.orange)
+                    .foregroundStyle(selected ? Color.white : Color.jtAccent)
                     .frame(height: 24)
                 Text(preset.name).font(.subheadline.weight(.semibold))
                 Text(preset.detail).font(.caption2).lineLimit(2).multilineTextAlignment(.leading)
-                    .foregroundStyle(selected ? Color.black.opacity(0.7) : Color.secondary)
+                    .foregroundStyle(selected ? Color.white.opacity(0.8) : Color.secondary)
             }
             .frame(maxWidth: .infinity, minHeight: 92, alignment: .topLeading)
             .padding(10)
-            .background(selected ? Color.orange : Color(white: 0.16), in: RoundedRectangle(cornerRadius: 12))
-            .foregroundStyle(selected ? Color.black : Color.primary)
+            .background(selected ? Color.jtAccent : Color(white: 0.16), in: RoundedRectangle(cornerRadius: 12))
+            .foregroundStyle(selected ? Color.white : Color.primary)
         }
         .buttonStyle(.plain)
         .accessibilityLabel("音效：\(preset.name)")

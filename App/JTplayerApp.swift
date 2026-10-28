@@ -9,7 +9,7 @@ struct JTplayerApp: App {
         WindowGroup {
             PlayerScreen()
                 .environment(model)
-                .tint(.orange)
+                .tint(.jtAccent)
                 .task { model.installDemoContentIfNeeded() }
                 #if DEBUG
                 .task { DebugHooks.run(model) }

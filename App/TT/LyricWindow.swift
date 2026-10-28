@@ -54,8 +54,8 @@ struct LyricWindow: View {
         if let lyrics = player.lyrics, !lyrics.lines.isEmpty {
             if lyrics.isSynced {
                 TimelineView(.periodic(from: .now, by: player.audio.state == .playing ? 0.25 : 60)) { _ in
-                    let current = lyrics.index(at: player.audio.currentTime)
-                    LyricLines(lyrics: lyrics, current: current, follow: current, style: style, fontSize: fontSize) { player.seek(to: $0) }
+                    let current = lyrics.index(at: player.lyricsTime)
+                    LyricLines(lyrics: lyrics, current: current, follow: current, style: style, fontSize: fontSize) { player.seek(to: $0 - player.lyricsOffset) }
                 }
             } else {
                 // 纯文本歌词：按播放进度慢慢往下滚
@@ -64,7 +64,12 @@ struct LyricWindow: View {
                 }
             }
         } else {
-            VStack(spacing: 6) {
+            VStack(spacing: 8) {
+                if let data = player.artwork {
+                    ArtworkView(data: data)
+                        .frame(maxWidth: fontSize * 9, maxHeight: fontSize * 9)
+                        .padding(.bottom, 4)
+                }
                 if player.current == nil || player.audio.state == .stopped {
                     Text(player.current?.displayName ?? "JTplayer")
                         .font(.system(size: fontSize * 1.1, weight: .semibold))
@@ -76,7 +81,12 @@ struct LyricWindow: View {
                 } else {
                     Text(player.current?.displayName ?? "")
                         .foregroundStyle(style.highlight.color)
-                    Text("没有找到歌词，长按可在线搜索或导入 .lrc").opacity(0.7)
+                    Text("没有找到歌词").opacity(0.7)
+                    HStack(spacing: 10) {
+                        LyricActionButton(title: "在线搜索", symbol: "magnifyingglass", color: style.highlight.color) { searching = true }
+                        LyricActionButton(title: "导入 .lrc", symbol: "doc.badge.plus", color: style.highlight.color) { importing = true }
+                    }
+                    .padding(.top, 4)
                 }
             }
             .font(.system(size: fontSize * 0.85))
@@ -101,7 +111,66 @@ struct LyricWindow: View {
             .disabled(player.current == nil)
         Button("重新查找歌词", systemImage: "arrow.clockwise") { player.reloadLyrics() }
             .disabled(player.current == nil)
+        if player.lyrics?.isSynced == true {
+            Section(PlayerController.describeLyricsOffset(player.lyricsOffset)) {
+                Button("歌词提前 0.5 秒", systemImage: "backward") { shiftLyrics(0.5) }
+                Button("歌词延后 0.5 秒", systemImage: "forward") { shiftLyrics(-0.5) }
+                if player.lyricsOffset != 0 {
+                    Button("恢复歌词时间", systemImage: "arrow.uturn.backward") {
+                        player.resetLyricsOffset()
+                        app.show("歌词时间已恢复")
+                    }
+                }
+            }
+        }
         Button("关闭歌词秀", systemImage: "xmark") { app.showLyrics = false }
+    }
+
+    /// 歌词比歌声慢就提前，快就延后；每首歌单独记住
+    private func shiftLyrics(_ delta: TimeInterval) {
+        player.adjustLyricsOffset(by: delta)
+        app.show(PlayerController.describeLyricsOffset(player.lyricsOffset))
+    }
+}
+
+/// 歌词区里的小按钮（找不到歌词时显示）
+private struct LyricActionButton: View {
+    let title: String
+    let symbol: String
+    let color: Color
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Label(title, systemImage: symbol)
+                .font(.footnote.weight(.medium))
+                .padding(.horizontal, 10)
+                .padding(.vertical, 5)
+                .foregroundStyle(color)
+                .overlay(Capsule().stroke(color.opacity(0.6), lineWidth: 1))
+                .contentShape(Capsule())
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+/// 专辑封面：只在封面变了时解码一次
+struct ArtworkView: View {
+    let data: Data
+    @State private var image: UIImage?
+
+    var body: some View {
+        Group {
+            if let image {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFit()
+                    .clipShape(RoundedRectangle(cornerRadius: 6))
+                    .shadow(color: .black.opacity(0.5), radius: 6, y: 2)
+            }
+        }
+        .task(id: data) { image = UIImage(data: data) }
+        .accessibilityHidden(true)
     }
 }
 
@@ -173,7 +242,7 @@ private struct KaraokeLine: View {
         let text = line.text.isEmpty ? "♪" : line.text
         let audio = app.player.audio
         TimelineView(.animation(minimumInterval: 1.0 / 30, paused: audio.state != .playing)) { _ in
-            let p = progress(at: audio.currentTime)
+            let p = progress(at: app.player.lyricsTime)
             Text(text)
                 .font(.system(size: fontSize * 1.08, weight: .semibold))
                 .foregroundStyle(style.text.color)

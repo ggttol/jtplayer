@@ -50,9 +50,9 @@ struct SideMenuView: View {
                 HStack(spacing: 12) {
                     Image(systemName: "music.note")
                         .font(.system(size: 18, weight: .semibold))
-                        .foregroundStyle(.orange)
+                        .foregroundStyle(Color.jtAccent)
                         .frame(width: 36, height: 36)
-                        .background(Color.orange.opacity(0.15), in: RoundedRectangle(cornerRadius: 8))
+                        .background(Color.jtAccent.opacity(0.15), in: RoundedRectangle(cornerRadius: 8))
                     VStack(alignment: .leading, spacing: 2) {
                         Text("JTplayer").font(.headline)
                         Text(app.player.current?.displayName ?? "未在播放")
@@ -128,7 +128,7 @@ struct SideMenuView: View {
         }
         .listStyle(.insetGrouped)
         .scrollContentBackground(.hidden)
-        .tint(.orange)
+        .tint(.jtAccent)
     }
 
     /// 定时关闭：到点淡出并暂停，或播完当前这首就停。
@@ -192,8 +192,8 @@ struct SideMenuView: View {
 private struct RoutePicker: UIViewRepresentable {
     func makeUIView(context: Context) -> AVRoutePickerView {
         let view = AVRoutePickerView()
-        view.tintColor = .systemOrange
-        view.activeTintColor = .systemOrange
+        view.tintColor = UIColor(Color.jtAccent)
+        view.activeTintColor = UIColor(Color.jtAccent)
         view.prioritizesVideoDevices = false
         return view
     }

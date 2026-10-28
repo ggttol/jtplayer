@@ -61,7 +61,7 @@ struct TTSkinsView: View {
                         Text(entry.author).font(.caption).foregroundStyle(.secondary)
                     }
                     Spacer()
-                    if selected { Image(systemName: "checkmark.circle.fill").foregroundStyle(.orange) }
+                    if selected { Image(systemName: "checkmark.circle.fill").foregroundStyle(Color.jtAccent) }
                 }
             }
             .contentShape(Rectangle())

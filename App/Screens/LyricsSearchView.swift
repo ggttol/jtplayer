@@ -67,7 +67,7 @@ struct LyricsSearchView: View {
                     Text(r.synced != nil ? "同步" : (r.isInstrumental ? "纯音乐" : "纯文本"))
                         .font(.caption2.weight(.semibold))
                         .padding(.horizontal, 6).padding(.vertical, 2)
-                        .background((r.synced != nil ? Color.orange : Color.gray).opacity(0.2), in: Capsule())
+                        .background((r.synced != nil ? Color.jtAccent : Color.gray).opacity(0.2), in: Capsule())
                 }
             }
             let detail = [r.provider.name, r.artist, r.album, r.duration.map(TimeFormat.clock)].compactMap { $0 }.filter { !$0.isEmpty }
