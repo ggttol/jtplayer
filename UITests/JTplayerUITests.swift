@@ -73,7 +73,7 @@ final class JTplayerUITests: XCTestCase {
         app.launchArguments = ["-JTplayerReset", "YES"]
         app.launch()
         app.buttons["菜单"].tap()
-        tapWhenReady(app.buttons["menu.来源"])
+        tapWhenReady(app.buttons["menu.音乐来源"])
         tapWhenReady(app.navigationBars.buttons["添加"])
         app.buttons["WebDAV / Alist / OpenList"].tap()
 
@@ -252,7 +252,7 @@ final class JTplayerUITests: XCTestCase {
         app.launchArguments = ["-JTplayerReset", "YES"]
         app.launch()
         app.buttons["菜单"].tap()
-        tapWhenReady(app.buttons["menu.来源"])
+        tapWhenReady(app.buttons["menu.音乐来源"])
         let local = app.buttons.containing(NSPredicate(format: "label CONTAINS %@", "本机文件")).firstMatch
         waitFor(local)
         local.press(forDuration: 1.0)

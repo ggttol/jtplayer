@@ -64,7 +64,7 @@ struct PlaylistWindow: View {
         HStack(spacing: 0) {
             toolMenu("添加") {
                 Button("从“文件”导入…", systemImage: "folder") { app.isImportingFiles = true }
-                Button("从来源添加…", systemImage: "externaldrive.connected.to.line.below") { app.sheet = .sources }
+                Button("从音乐来源添加…", systemImage: "externaldrive.connected.to.line.below") { app.sheet = .sources }
                 Button("从曲库添加…", systemImage: "music.note.list") { app.sheet = .library }
             }
             toolMenu("删除") {
@@ -266,7 +266,7 @@ struct PlaylistWindow: View {
     private func emptyHint(_ style: TTPlaylistStyle) -> some View {
         VStack(spacing: 8) {
             Text("播放列表是空的")
-            Button("打开来源") { app.sheet = .sources }
+            Button("打开音乐来源") { app.sheet = .sources }
                 .buttonStyle(.bordered)
                 .tint(style.current.color)
             Text("也可以点上面的“添加”从“文件”或曲库添加").opacity(0.7)
