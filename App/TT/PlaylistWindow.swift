@@ -252,6 +252,9 @@ struct PlaylistWindow: View {
             }
             .disabled(isCurrent)
             Button("离线下载", systemImage: "arrow.down.circle") { makeOffline([track]) }
+            if app.canShowArtist(track), let artist = track.artist {
+                Button("查看歌手：\(artist)", systemImage: "music.mic") { app.showArtist(of: track) }
+            }
             Button("曲目信息", systemImage: "info.circle") { infoTrack = track }
             Button("从列表删除", systemImage: "trash", role: .destructive) {
                 player.remove(at: IndexSet([index]))
