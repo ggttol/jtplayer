@@ -52,6 +52,10 @@ enum DebugHooks {
                 }
             }
         }
+        // 测试侧边菜单“歌手”入口
+        if defaults.bool(forKey: "DebugShowArtistList") {
+            Task { try? await Task.sleep(for: .seconds(1)); app.showArtistList() }
+        }
         if defaults.string(forKey: "JTplayerSheet") == "menu" {
             app.showSideMenu = true
         } else if let sheet = defaults.string(forKey: "JTplayerSheet").flatMap(AppModel.Sheet.init(rawValue:)) {
