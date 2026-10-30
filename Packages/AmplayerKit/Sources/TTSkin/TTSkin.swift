@@ -72,7 +72,7 @@ public final class TTSkin: @unchecked Sendable, Identifiable {
     /// .skn / .zip 数据
     public static func load(sknData data: Data, id: String) throws -> TTSkin {
         let zip: ZipArchive
-        do { zip = try ZipArchive(data: data) } catch { throw LoadError.invalid("不是有效的 .skn（zip）文件") }
+        do { zip = try ZipArchive(data: data) } catch { throw LoadError.invalid(String(localized: "不是有效的 .skn（zip）文件")) }
         var files: [String: Data] = [:]
         for entry in zip.entries where !entry.path.hasSuffix("/") {
             guard let d = try? zip.data(for: entry) else { continue }
@@ -113,7 +113,7 @@ public final class TTSkin: @unchecked Sendable, Identifiable {
         for (k, v) in files where k.hasPrefix(prefix) { rooted[String(k.dropFirst(prefix.count))] = v }
 
         var doc: TTSkinDocument
-        do { doc = try TTSkinParser.parseSkin(skinData) } catch { throw LoadError.invalid("Skin.xml 无法解析（只支持 version=\"2\" 的皮肤）") }
+        do { doc = try TTSkinParser.parseSkin(skinData) } catch { throw LoadError.invalid(String(localized: "Skin.xml 无法解析（只支持 version=\"2\" 的皮肤）")) }
         if doc.name.isEmpty { doc.name = id }
         if let d = rooted["lyric.xml"] { doc.lyricStyle = TTSkinParser.parseLyricStyle(d, base: doc.lyricStyle) }
         if let d = rooted["playlist.xml"] { doc.playlistStyle = TTSkinParser.parsePlaylistStyle(d, base: doc.playlistStyle) }
@@ -125,7 +125,7 @@ public final class TTSkin: @unchecked Sendable, Identifiable {
             if let image = decodeImage(data, transparent: key) { images[name] = TTImage(cgImage: image, scale: 1) }
         }
         guard doc.player.image.flatMap({ images[Self.key($0)] ?? images[String(Self.key($0).split(separator: "/").last ?? "")] }) != nil else {
-            throw LoadError.invalid("皮肤缺少主窗口背景图")
+            throw LoadError.invalid(String(localized: "皮肤缺少主窗口背景图"))
         }
         return TTSkin(id: id, document: doc, images: images)
     }

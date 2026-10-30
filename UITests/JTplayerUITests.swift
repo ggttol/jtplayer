@@ -50,6 +50,7 @@ final class JTplayerUITests: XCTestCase {
     /// 本机文件：播放、暂停、继续、下一首、停止
     func testTransportControls() {
         app.launchArguments = ["-JTplayerReset", "YES", "-JTplayerDemoPlay", "YES"]
+        app.launchArguments += ["-AppleLanguages", "(zh-Hans)", "-AppleLocale", "zh_CN"]
         app.launch()
         waitForState("播放中")
         app.buttons["暂停"].tap()
@@ -68,6 +69,7 @@ final class JTplayerUITests: XCTestCase {
     /// 均衡器预设与开关
     func testEqualizerPreset() {
         app.launchArguments = ["-JTplayerReset", "YES", "-jtplayer.showEQ", "YES"]
+        app.launchArguments += ["-AppleLanguages", "(zh-Hans)", "-AppleLocale", "zh_CN"]
         app.launch()
         tapWhenReady(app.buttons["均衡器预设"])
         pickEQPreset("Rock")
@@ -82,6 +84,7 @@ final class JTplayerUITests: XCTestCase {
     /// 通过表单添加 WebDAV 来源 → 测试连接 → 保存 → 浏览 → 点歌播放
     func testAddWebDAVSourceAndPlay() {
         app.launchArguments = ["-JTplayerReset", "YES"]
+        app.launchArguments += ["-AppleLanguages", "(zh-Hans)", "-AppleLocale", "zh_CN"]
         app.launch()
         app.buttons["菜单"].tap()
         tapWhenReady(app.buttons["menu.音乐来源"])
@@ -139,6 +142,7 @@ final class JTplayerUITests: XCTestCase {
     /// 皮肤列表可打开并切换回内置皮肤
     func testSkinsSheet() {
         app.launchArguments = ["-JTplayerReset", "YES"]
+        app.launchArguments += ["-AppleLanguages", "(zh-Hans)", "-AppleLocale", "zh_CN"]
         app.launch()
         app.buttons["菜单"].tap()
         // 侧边菜单较长，“皮肤”可能在第一屏以外
@@ -155,6 +159,7 @@ final class JTplayerUITests: XCTestCase {
     /// 点歌名直接播放；长按进入多选后点歌名是勾选
     func testPlaylistTapPlaysAndMultiSelect() {
         app.launchArguments = ["-JTplayerReset", "YES", "-JTplayerDemoPlay", "YES", "-jtplayer.showPL", "YES", "-jtplayer.showLyrics", "NO"]
+        app.launchArguments += ["-AppleLanguages", "(zh-Hans)", "-AppleLocale", "zh_CN"]
         app.launch()
         waitForState("播放中")
         let row3 = app.descendants(matching: .any).matching(NSPredicate(format: "label BEGINSWITH %@", "3. ")).firstMatch
@@ -182,6 +187,7 @@ final class JTplayerUITests: XCTestCase {
     /// 长按菜单“移动 › 移到最前”；清空列表后歌词面板不再显示旧歌词
     func testPlaylistMoveAndClear() {
         app.launchArguments = ["-JTplayerReset", "YES", "-JTplayerDemoPlay", "YES", "-jtplayer.showPL", "YES", "-jtplayer.showLyrics", "NO"]
+        app.launchArguments += ["-AppleLanguages", "(zh-Hans)", "-AppleLocale", "zh_CN"]
         app.launch()
         waitForState("播放中")
         let third = row("3. ")
@@ -203,6 +209,7 @@ final class JTplayerUITests: XCTestCase {
     /// 侧边菜单：定时关闭显示倒计时，取消后恢复“关”
     func testSleepTimer() {
         app.launchArguments = ["-JTplayerReset", "YES", "-JTplayerDemoPlay", "YES"]
+        app.launchArguments += ["-AppleLanguages", "(zh-Hans)", "-AppleLocale", "zh_CN"]
         app.launch()
         waitForState("播放中")
         app.buttons["菜单"].tap()
@@ -219,6 +226,7 @@ final class JTplayerUITests: XCTestCase {
     /// 均衡器“开启”按钮能关掉和打开
     func testEqualizerEnable() {
         app.launchArguments = ["-JTplayerReset", "YES", "-jtplayer.showEQ", "YES"]
+        app.launchArguments += ["-AppleLanguages", "(zh-Hans)", "-AppleLocale", "zh_CN"]
         app.launch()
         tapWhenReady(app.buttons["均衡器：开"])
         XCTAssertTrue(app.buttons["均衡器：关"].waitForExistence(timeout: 3))
@@ -229,6 +237,7 @@ final class JTplayerUITests: XCTestCase {
     /// 播放模式按钮：五种模式依次切换，转一圈回到原来的
     func testPlayModeCycle() {
         app.launchArguments = ["-JTplayerReset", "YES"]
+        app.launchArguments += ["-AppleLanguages", "(zh-Hans)", "-AppleLocale", "zh_CN"]
         app.launch()
         let mode = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "播放模式：")).firstMatch
         waitFor(mode)
@@ -247,6 +256,7 @@ final class JTplayerUITests: XCTestCase {
     /// 主窗口的 LRC / PL 按钮开关歌词秀和播放列表窗口
     func testWindowToggles() {
         app.launchArguments = ["-JTplayerReset", "YES", "-jtplayer.showPL", "YES", "-jtplayer.showLyrics", "YES"]
+        app.launchArguments += ["-AppleLanguages", "(zh-Hans)", "-AppleLocale", "zh_CN"]
         app.launch()
         waitFor(app.buttons["关闭歌词秀"])
         app.buttons["歌词秀"].firstMatch.tap()
@@ -261,6 +271,7 @@ final class JTplayerUITests: XCTestCase {
     /// 扫描本机文件进曲库时读标签：艺术家页能看到 m4a 标签里的“测试艺术家”
     func testLibraryScanReadsTags() {
         app.launchArguments = ["-JTplayerReset", "YES"]
+        app.launchArguments += ["-AppleLanguages", "(zh-Hans)", "-AppleLocale", "zh_CN"]
         app.launch()
         app.buttons["菜单"].tap()
         tapWhenReady(app.buttons["menu.音乐来源"])
@@ -279,6 +290,7 @@ final class JTplayerUITests: XCTestCase {
     /// 音效面板：选一个预设，侧边菜单里显示它的名字
     func testSoundEffectsPreset() {
         app.launchArguments = ["-JTplayerReset", "YES", "-JTplayerDemoPlay", "YES"]
+        app.launchArguments += ["-AppleLanguages", "(zh-Hans)", "-AppleLocale", "zh_CN"]
         app.launch()
         waitForState("播放中")
         app.buttons["菜单"].tap()

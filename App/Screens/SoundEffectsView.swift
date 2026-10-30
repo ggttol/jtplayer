@@ -113,7 +113,7 @@ struct SoundEffectsView: View {
         let selected = player.equalizer.bands == preset.bands && player.equalizer.preamp == preset.preamp
         return Button {
             player.applyPreset(preset)
-                app.show("均衡器：\(preset.name)")
+                app.show(String(localized: "均衡器：\(preset.name)"))
         } label: {
             Text(preset.name)
                 .font(.subheadline.weight(.medium))
@@ -144,14 +144,14 @@ struct SoundEffectsView: View {
     private func slider(_ title: String, value: Binding<Float>, range: ClosedRange<Float>, unit: String, step: Float = 0.5) -> some View {
         VStack(alignment: .leading, spacing: 2) {
             HStack {
-                Text(title)
+                Text(LocalizedStringKey(title))
                 Spacer()
                 Text(format(value.wrappedValue, unit: unit, step: step))
                     .monospacedDigit()
                     .foregroundStyle(.secondary)
             }
             Slider(value: value, in: range, step: step)
-                .accessibilityLabel(title)
+                .accessibilityLabel(String(localized: String.LocalizationValue(title)))
         }
     }
 
@@ -161,6 +161,6 @@ struct SoundEffectsView: View {
         else if step >= 0.1 { number = String(format: "%.1f", v) }
         else { number = String(format: "%.2f", v) }
         let signed = (unit == "dB" || unit == "半音") && v > 0 ? "+" + number : number
-        return unit.isEmpty ? signed : "\(signed) \(unit)"
+        return unit.isEmpty ? signed : "\(signed) " + String(localized: String.LocalizationValue(unit))
     }
 }

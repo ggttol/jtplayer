@@ -31,7 +31,7 @@ struct LyricWindow: View {
             if let close = w["close"] {
                 var e = close
                 let _ = e.rect = w.layout(close.rect, base: base, size: size)
-                TTButton(element: e, label: "关闭歌词秀") { app.showLyrics = false }
+                TTButton(element: e, label: String(localized: "关闭歌词秀")) { app.showLyrics = false }
             }
         }
         .frame(width: size.width * scale, height: size.height * scale, alignment: .topLeading)
@@ -41,9 +41,9 @@ struct LyricWindow: View {
             let scoped = url.startAccessingSecurityScopedResource()
             defer { if scoped { url.stopAccessingSecurityScopedResource() } }
             if let data = try? Data(contentsOf: url), let text = Lyrics.decode(data), player.setLyrics(text) {
-                app.show("已导入歌词")
+                app.show(String(localized: "已导入歌词"))
             } else {
-                app.show("不是有效的歌词文件")
+                app.show(String(localized: "不是有效的歌词文件"))
             }
         }
     }
@@ -83,8 +83,8 @@ struct LyricWindow: View {
                         .foregroundStyle(style.highlight.color)
                     Text("没有找到歌词").opacity(0.7)
                     HStack(spacing: 10) {
-                        LyricActionButton(title: "在线搜索", symbol: "magnifyingglass", color: style.highlight.color) { searching = true }
-                        LyricActionButton(title: "导入 .lrc", symbol: "doc.badge.plus", color: style.highlight.color) { importing = true }
+                        LyricActionButton(title: String(localized: "在线搜索"), symbol: "magnifyingglass", color: style.highlight.color) { searching = true }
+                        LyricActionButton(title: String(localized: "导入 .lrc"), symbol: "doc.badge.plus", color: style.highlight.color) { importing = true }
                     }
                     .padding(.top, 4)
                 }
@@ -118,7 +118,7 @@ struct LyricWindow: View {
                 if player.lyricsOffset != 0 {
                     Button("恢复歌词时间", systemImage: "arrow.uturn.backward") {
                         player.resetLyricsOffset()
-                        app.show("歌词时间已恢复")
+                        app.show(String(localized: "歌词时间已恢复"))
                     }
                 }
             }

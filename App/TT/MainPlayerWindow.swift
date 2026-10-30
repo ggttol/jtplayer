@@ -43,7 +43,7 @@ struct MainPlayerWindow: View {
 
             if let e = w["progress"] { ProgressSlider(element: e) }
             if let e = w["volume"] {
-                TTSlider(element: e, value: Double(player.volume), label: "音量", valueText: "\(Int(player.volume * 100))%") { v, _ in
+                TTSlider(element: e, value: Double(player.volume), label: String(localized: "音量"), valueText: "\(Int(player.volume * 100))%") { v, _ in
                     player.volume = Float(v)
                     app.mutedVolume = nil
                 }
@@ -64,29 +64,29 @@ struct MainPlayerWindow: View {
 
     @ViewBuilder
     private func windowButtons(_ w: TTWindow) -> some View {
-        TTButton(element: w["minimize"], label: app.isMiniMode ? "恢复窗口" : "迷你模式") { app.toggleMiniMode() }
-        TTButton(element: w["minimode"], selected: app.isMiniMode, label: app.isMiniMode ? "恢复窗口" : "迷你模式") { app.toggleMiniMode() }
-        TTButton(element: w["exit"], label: "停止播放") { player.stop() }
-        TTButton(element: w["lyric"], selected: app.showLyrics, label: "歌词秀") { app.showLyrics.toggle() }
-        TTButton(element: w["equalizer"], selected: app.showEqualizer, label: "均衡器") { app.showEqualizer.toggle() }
-        TTButton(element: w["playlist"], selected: app.showPlaylist, label: "播放列表") { app.showPlaylist.toggle() }
-        TTButton(element: w["browser"], label: "音乐窗（曲库）") { app.sheet = .library }
-        TTButton(element: w["set"], label: "设置") { app.sheet = .settings }
-        TTButton(element: w["open"], label: "打开文件") { app.isImportingFiles = true }
-        TTButton(element: w["mute"], selected: app.mutedVolume != nil, label: app.mutedVolume != nil ? "取消静音" : "静音") { app.toggleMute() }
+        TTButton(element: w["minimize"], label: app.isMiniMode ? String(localized: "恢复窗口") : String(localized: "迷你模式")) { app.toggleMiniMode() }
+        TTButton(element: w["minimode"], selected: app.isMiniMode, label: app.isMiniMode ? String(localized: "恢复窗口") : String(localized: "迷你模式")) { app.toggleMiniMode() }
+        TTButton(element: w["exit"], label: String(localized: "停止播放")) { player.stop() }
+        TTButton(element: w["lyric"], selected: app.showLyrics, label: String(localized: "歌词秀")) { app.showLyrics.toggle() }
+        TTButton(element: w["equalizer"], selected: app.showEqualizer, label: String(localized: "均衡器")) { app.showEqualizer.toggle() }
+        TTButton(element: w["playlist"], selected: app.showPlaylist, label: String(localized: "播放列表")) { app.showPlaylist.toggle() }
+        TTButton(element: w["browser"], label: String(localized: "音乐窗（曲库）")) { app.sheet = .library }
+        TTButton(element: w["set"], label: String(localized: "设置")) { app.sheet = .settings }
+        TTButton(element: w["open"], label: String(localized: "打开文件")) { app.isImportingFiles = true }
+        TTButton(element: w["mute"], selected: app.mutedVolume != nil, label: app.mutedVolume != nil ? String(localized: "取消静音") : String(localized: "静音")) { app.toggleMute() }
     }
 
     @ViewBuilder
     private func transport(_ w: TTWindow) -> some View {
-        TTButton(element: w["prev"], label: "上一首") { player.previous() }
-        TTButton(element: w["next"], label: "下一首") { player.next() }
-        TTButton(element: w["stop"], label: "停止") { player.stop() }
+        TTButton(element: w["prev"], label: String(localized: "上一首")) { player.previous() }
+        TTButton(element: w["next"], label: String(localized: "下一首")) { player.next() }
+        TTButton(element: w["stop"], label: String(localized: "停止")) { player.stop() }
         // 播放和暂停通常放在同一个位置：播放时显示暂停
         let playing = player.audio.state == .playing
         if let pause = w["pause"], playing {
-            TTButton(element: pause, label: "暂停") { player.pause() }
+            TTButton(element: pause, label: String(localized: "暂停")) { player.pause() }
         } else if let play = w["play"] {
-            TTButton(element: play, label: playing ? "暂停" : "播放") {
+            TTButton(element: play, label: playing ? String(localized: "暂停") : String(localized: "播放")) {
                 if playing { player.pause() } else { player.play() }
             }
         }
@@ -97,7 +97,7 @@ struct MainPlayerWindow: View {
     private func modeButton(_ w: TTWindow) -> some View {
         let mode = player.playMode
         if let e = w[mode.elementName] {
-            TTButton(element: e, label: "播放模式：\(mode.title)") {
+            TTButton(element: e, label: String(localized: "播放模式：\(mode.title)")) {
                 player.playMode = mode.next
                 app.show(player.playMode.title)
             }
@@ -106,23 +106,23 @@ struct MainPlayerWindow: View {
 
     private var infoText: String {
         if let error = player.lastError { return error }
-        guard let track = player.current else { return "JTplayer · 点左上角图标打开菜单添加音乐" }
-        let prefix = player.isLoading ? "[缓冲中\(player.loadingProgress.map { " " + $0 } ?? "")] " : ""
+        guard let track = player.current else { return String(localized: "JTplayer · 点左上角图标打开菜单添加音乐") }
+        let prefix = player.isLoading ? String(localized: "[缓冲中\(player.loadingProgress.map { " " + $0 } ?? "")] ") : ""
         return prefix + track.displayName
     }
 
     private var formatText: String {
         guard let info = player.audio.info, player.current != nil else { return "" }
-        let channels = info.channels >= 2 ? "立体声" : "单声道"
+        let channels = info.channels >= 2 ? String(localized: "立体声") : String(localized: "单声道")
         return "\(info.bitrate)kbps \(Int((info.sampleRate / 1000).rounded()))kHz \(channels)"
     }
 
     private var statusText: String {
-        if player.isLoading { return "缓冲" }
+        if player.isLoading { return String(localized: "缓冲") }
         return switch player.audio.state {
-        case .playing: "播放"
-        case .paused: "暂停"
-        default: "停止"
+        case .playing: String(localized: "播放")
+        case .paused: String(localized: "暂停")
+        default: String(localized: "停止")
         }
     }
 }
@@ -152,7 +152,7 @@ private struct TimeLED: View {
 
     private var accessibilityState: String {
         let player = app.player
-        let state = player.isLoading ? "缓冲中" : (player.audio.state == .playing ? "播放中" : (player.audio.state == .paused ? "已暂停" : "已停止"))
+        let state = player.isLoading ? String(localized: "缓冲中") : (player.audio.state == .playing ? String(localized: "播放中") : (player.audio.state == .paused ? String(localized: "已暂停") : String(localized: "已停止")))
         return "\(state) \(TimeFormat.clock(player.audio.currentTime)) \(player.current?.title ?? "")"
     }
 }
@@ -167,7 +167,7 @@ private struct ProgressSlider: View {
         TimelineView(.periodic(from: .now, by: audio.state == .playing ? 0.5 : 60)) { _ in
             let duration = audio.info?.duration ?? 0
             let value = duration > 0 ? audio.currentTime / duration : 0
-            TTSlider(element: element, value: value, showThumb: audio.info != nil, label: "进度",
+            TTSlider(element: element, value: value, showThumb: audio.info != nil, label: String(localized: "进度"),
                      valueText: "\(TimeFormat.clock(audio.currentTime)) / \(TimeFormat.clock(duration))") { v, ended in
                 if ended, duration > 0 { app.player.seek(to: v * duration) }
             }

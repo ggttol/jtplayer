@@ -17,35 +17,35 @@ struct EqualizerWindow: View {
         let eq = player.equalizer
         ZStack(alignment: .topLeading) {
             if let bg { TTImageView(image: bg) }
-            TTButton(element: w["close"], label: "关闭均衡器") { app.showEqualizer = false }
-            TTButton(element: w["enabled"], selected: eq.enabled, label: eq.enabled ? "均衡器：开" : "均衡器：关") {
+            TTButton(element: w["close"], label: String(localized: "关闭均衡器")) { app.showEqualizer = false }
+            TTButton(element: w["enabled"], selected: eq.enabled, label: eq.enabled ? String(localized: "均衡器：开") : String(localized: "均衡器：关")) {
                 var e = player.equalizer
                 e.enabled.toggle()
                 player.equalizer = e
-                app.show(e.enabled ? "均衡器已开启" : "均衡器已关闭")
+                app.show(e.enabled ? String(localized: "均衡器已开启") : String(localized: "均衡器已关闭"))
             }
             if let e = w["profile"] { presets(e) }
-            TTButton(element: w["reset"], label: "重置") {
+            TTButton(element: w["reset"], label: String(localized: "重置")) {
                 var e = player.equalizer
                 e.preamp = 0
                 e.bands = Array(repeating: 0, count: 10)
                 player.equalizer = e
                 player.balance = 0
-                app.show("已重置")
+                app.show(String(localized: "已重置"))
             }
             if let e = w["balance"] {
-                TTSlider(element: e, value: Double(player.balance + 1) / 2, snapToCenter: true, label: "平衡",
+                TTSlider(element: e, value: Double(player.balance + 1) / 2, snapToCenter: true, label: String(localized: "平衡"),
                          valueText: balanceText) { v, _ in
                     player.balance = Float(v * 2 - 1)
                 }
             }
             if let e = w["surround"] {
-                TTSlider(element: e, value: surroundValue, label: "环绕", valueText: "\(Int(surroundValue * 100))%") { v, _ in
+                TTSlider(element: e, value: surroundValue, label: String(localized: "环绕"), valueText: "\(Int(surroundValue * 100))%") { v, _ in
                     setSurround(v)
                 }
             }
             if let e = w["preamp"] {
-                TTSlider(element: e, value: Double(eq.preamp + 12) / 24, snapToCenter: true, label: "前置放大",
+                TTSlider(element: e, value: Double(eq.preamp + 12) / 24, snapToCenter: true, label: String(localized: "前置放大"),
                          valueText: String(format: "%+.0f dB", eq.preamp)) { v, _ in
                     var s = player.equalizer
                     s.preamp = Float(v * 24 - 12)
@@ -55,7 +55,7 @@ struct EqualizerWindow: View {
             ForEach(0..<10, id: \.self) { i in
                 if let band = doc.equalizerBand(i), i < eq.bands.count {
                     TTSlider(element: band, value: Double(eq.bands[i] + 12) / 24, snapToCenter: true,
-                             label: "\(EqualizerSettings.bandLabels[i]) 赫兹", valueText: String(format: "%+.0f dB", eq.bands[i])) { v, _ in
+                             label: String(localized: "\(EqualizerSettings.bandLabels[i]) 赫兹"), valueText: String(format: "%+.0f dB", eq.bands[i])) { v, _ in
                         var s = player.equalizer
                         s.bands[i] = Float(v * 24 - 12)
                         if !s.enabled { s.enabled = true }
@@ -81,8 +81,8 @@ struct EqualizerWindow: View {
 
     private var balanceText: String {
         let b = player.balance
-        if abs(b) < 0.01 { return "居中" }
-        return b < 0 ? "偏左 \(Int(-b * 100))%" : "偏右 \(Int(b * 100))%"
+        if abs(b) < 0.01 { return String(localized: "居中") }
+        return b < 0 ? String(localized: "偏左 \(Int(-b * 100))%") : String(localized: "偏右 \(Int(b * 100))%")
     }
 
     /// 环绕：用音效里的环绕旋转 + 小房间混响模拟，0…1

@@ -39,7 +39,7 @@ struct PlaylistWindow: View {
             if let close = w["close"] {
                 var e = close
                 let _ = e.rect = w.layout(close.rect, base: base, size: size)
-                TTButton(element: e, label: "关闭播放列表") { app.showPlaylist = false }
+                TTButton(element: e, label: String(localized: "关闭播放列表")) { app.showPlaylist = false }
             }
         }
         .frame(width: size.width * scale, height: size.height * scale, alignment: .topLeading)
@@ -48,9 +48,9 @@ struct PlaylistWindow: View {
             Button("保存") {
                 do {
                     try app.library.savePlaylist(player.queue.tracks, name: playlistName)
-                    app.show("已保存到 文件 › JTplayer › Playlists")
+                    app.show(String(localized: "已保存到 文件 › JTplayer › Playlists"))
                 } catch {
-                    app.show("保存失败：\(error.localizedDescription)")
+                    app.show(String(localized: "保存失败：\(error.localizedDescription)"))
                 }
             }
             Button("取消", role: .cancel) {}
@@ -62,12 +62,12 @@ struct PlaylistWindow: View {
 
     private func toolbar(_ style: TTPlaylistStyle) -> some View {
         HStack(spacing: 0) {
-            toolMenu("添加") {
+            toolMenu(String(localized: "添加")) {
                 Button("从“文件”导入…", systemImage: "folder") { app.isImportingFiles = true }
                 Button("从音乐来源添加…", systemImage: "externaldrive.connected.to.line.below") { app.sheet = .sources }
                 Button("从曲库添加…", systemImage: "music.note.list") { app.sheet = .library }
             }
-            toolMenu("删除") {
+            toolMenu(String(localized: "删除")) {
                 Button("删除所选", systemImage: "minus.circle") { removeSelected() }
                     .disabled(app.selection.isEmpty)
                 Button("只保留所选", systemImage: "crop") { cropToSelection() }
@@ -75,17 +75,17 @@ struct PlaylistWindow: View {
                 Button("删除重复的", systemImage: "square.on.square") { removeDuplicates() }
                 Button("清空列表", systemImage: "trash", role: .destructive) { player.clear(); app.endSelection() }
             }
-            toolMenu("列表") {
+            toolMenu(String(localized: "列表")) {
                 Button("新建列表", systemImage: "doc") { player.clear(); app.endSelection() }
                 Button("打开列表…", systemImage: "folder") { app.sheet = .playlists }
                 Button("保存列表…", systemImage: "square.and.arrow.down") {
-                    playlistName = player.current?.album ?? "我的播放列表"
+                    playlistName = player.current?.album ?? String(localized: "我的播放列表")
                     isSaving = true
                 }
                 .disabled(player.queue.isEmpty)
                 Button("曲库（音乐窗）", systemImage: "opticaldisc") { app.sheet = .library }
             }
-            toolMenu("排序") {
+            toolMenu(String(localized: "排序")) {
                 Button("按标题") { sort(.title) }
                 Button("按艺术家") { sort(.artist) }
                 Button("按专辑") { sort(.album) }
@@ -94,11 +94,11 @@ struct PlaylistWindow: View {
                 Button("反转顺序") { player.reverse(); app.endSelection() }
                 Button("随机打乱") { player.randomize(); app.endSelection() }
             }
-            toolButton("查找") {
+            toolButton(String(localized: "查找")) {
                 searching.toggle()
                 if searching { searchFocused = true } else { searchText = "" }
             }
-            toolMenu("编辑") {
+            toolMenu(String(localized: "编辑")) {
                 Button(app.isSelecting ? "退出多选" : "多选", systemImage: "checkmark.circle") {
                     if app.isSelecting { app.endSelection() } else { app.isSelecting = true }
                 }
@@ -113,7 +113,7 @@ struct PlaylistWindow: View {
                 }
                 .disabled(player.queue.isEmpty)
             }
-            toolMenu("模式") {
+            toolMenu(String(localized: "模式")) {
                 Picker("播放模式", selection: Binding(get: { player.playMode }, set: { player.playMode = $0; app.show($0.title) })) {
                     ForEach(PlayMode.allCases) { Text($0.title).tag($0) }
                 }
@@ -316,7 +316,7 @@ struct PlaylistWindow: View {
         for (i, t) in player.queue.tracks.enumerated() where !seen.insert(t.id).inserted { dupes.insert(i) }
         player.remove(at: dupes)
         app.endSelection()
-        app.show(dupes.isEmpty ? "没有重复的歌曲" : "已删除 \(dupes.count) 首重复的")
+        app.show(dupes.isEmpty ? String(localized: "没有重复的歌曲") : String(localized: "已删除 \(dupes.count) 首重复的"))
     }
 
     private func sort(_ key: PlayerController.SortKey) {
@@ -327,14 +327,14 @@ struct PlaylistWindow: View {
     private func makeOffline(_ tracks: [Track]) {
         let sources = app.sources
         let cache = player.cache
-        app.show("开始离线下载 \(tracks.count) 首")
+        app.show(String(localized: "开始离线下载 \(tracks.count) 首"))
         Task {
             var failed = 0
             for t in tracks {
                 guard let source = sources.source(t.sourceID) else { failed += 1; continue }
                 do { try await cache.makeOffline(t, source: source) } catch { failed += 1 }
             }
-            app.show(failed == 0 ? "离线下载完成" : "\(failed) 首下载失败")
+            app.show(failed == 0 ? String(localized: "离线下载完成") : String(localized: "\(failed) 首下载失败"))
         }
     }
 }

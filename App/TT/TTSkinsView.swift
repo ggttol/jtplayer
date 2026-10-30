@@ -36,11 +36,11 @@ struct TTSkinsView: View {
                 guard case let .success(url) = result else { return }
                 do {
                     let entry = try app.skins.importSkin(from: url)
-                    app.show("已切换到皮肤 \(entry.name)")
+                    app.show(String(localized: "已切换到皮肤 \(entry.name)"))
                 } catch let error as TTSkin.LoadError {
-                    if case let .invalid(message) = error { app.show(message) } else { app.show("皮肤包里没有 Skin.xml") }
+                    if case let .invalid(message) = error { app.show(message) } else { app.show(String(localized: "皮肤包里没有 Skin.xml")) }
                 } catch {
-                    app.show("导入失败：\(error.localizedDescription)")
+                    app.show(String(localized: "导入失败：\(error.localizedDescription)"))
                 }
             }
         }

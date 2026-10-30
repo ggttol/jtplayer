@@ -28,19 +28,19 @@ public struct TTTheme: Sendable, Equatable, Identifiable {
     }
 
     public static let all: [TTTheme] = [
-        TTTheme(id: "jt-blue", name: "静听蓝", frame: ("#E8EEF6", "#A9BBD3", "#5A6F8E"), highlight: 0.75, title: "#1D3557",
+        TTTheme(id: "jt-blue", name: String(localized: "静听蓝"), frame: ("#E8EEF6", "#A9BBD3", "#5A6F8E"), highlight: 0.75, title: "#1D3557",
                 panel: ("#0A1A33", "#12305A", "#061024"), lcd: ("#9FE3FF", "#4F7FAE"), accent: ("#3FA9FF", "#9FE3FF"),
                 button: ("#FDFEFF", "#BCCBE0", "#6B7F9E"), glyph: ("#2A4466", "#1478E0")),
-        TTTheme(id: "jt-black", name: "炫酷黑", frame: ("#3A3D44", "#15171B", "#000000"), highlight: 0.14, title: "#E6E6E6",
+        TTTheme(id: "jt-black", name: String(localized: "炫酷黑"), frame: ("#3A3D44", "#15171B", "#000000"), highlight: 0.14, title: "#E6E6E6",
                 panel: ("#050607", "#101318", "#000000"), lcd: ("#FFB547", "#8A6A3A"), accent: ("#FF8A1F", "#FFD08A"),
                 button: ("#4A4E57", "#22252B", "#0A0B0D"), glyph: ("#D9D9D9", "#FF9A3C")),
-        TTTheme(id: "jt-pink", name: "樱花粉", frame: ("#FFF0F5", "#F2B8CC", "#B9708A"), highlight: 0.8, title: "#7A2E4A",
+        TTTheme(id: "jt-pink", name: String(localized: "樱花粉"), frame: ("#FFF0F5", "#F2B8CC", "#B9708A"), highlight: 0.8, title: "#7A2E4A",
                 panel: ("#3A1424", "#5A1F38", "#220A14"), lcd: ("#FFD1E3", "#B66A8A"), accent: ("#FF6FA5", "#FFD1E3"),
                 button: ("#FFFFFF", "#F5C9D8", "#C4859D"), glyph: ("#8A3456", "#E8437F")),
-        TTTheme(id: "jt-green", name: "翡翠绿", frame: ("#EEF7EE", "#AFCFB4", "#557A5C"), highlight: 0.8, title: "#1F4D2A",
+        TTTheme(id: "jt-green", name: String(localized: "翡翠绿"), frame: ("#EEF7EE", "#AFCFB4", "#557A5C"), highlight: 0.8, title: "#1F4D2A",
                 panel: ("#08200F", "#12381C", "#03110A"), lcd: ("#A8FFB8", "#4E9A61"), accent: ("#39D46A", "#A8FFB8"),
                 button: ("#FFFFFF", "#C3DCC6", "#6E9475"), glyph: ("#285C35", "#1FA34A")),
-        TTTheme(id: "jt-silver", name: "金属银", frame: ("#F4F4F4", "#B8BCC2", "#6E737A"), highlight: 0.85, title: "#2B2F36",
+        TTTheme(id: "jt-silver", name: String(localized: "金属银"), frame: ("#F4F4F4", "#B8BCC2", "#6E737A"), highlight: 0.85, title: "#2B2F36",
                 panel: ("#1B1E22", "#2C3137", "#0D0F11"), lcd: ("#E8F1FF", "#7D8794"), accent: ("#8FB8FF", "#E8F1FF"),
                 button: ("#FFFFFF", "#C9CDD3", "#80858C"), glyph: ("#3B4048", "#2F6FD6")),
     ]
@@ -193,9 +193,9 @@ struct BuiltInPainter {
         let t = theme
         switch name {
         case "player.png": return mainBackground()
-        case "lyric.png": return windowBackground(BuiltInLayout.lyricSize, title: "歌词秀", panel: CGRect(x: 6, y: 22, width: 318, height: 122), fill: t.lyricStyle.background)
+        case "lyric.png": return windowBackground(BuiltInLayout.lyricSize, title: String(localized: "歌词秀"), panel: CGRect(x: 6, y: 22, width: 318, height: 122), fill: t.lyricStyle.background)
         case "playlist.png":
-            return windowBackground(BuiltInLayout.playlistSize, title: "播放列表", panel: CGRect(x: 6, y: 38, width: 318, height: 176), fill: t.playlistStyle.background) { ctx in
+            return windowBackground(BuiltInLayout.playlistSize, title: String(localized: "播放列表"), panel: CGRect(x: 6, y: 38, width: 318, height: 176), fill: t.playlistStyle.background) { ctx in
                 roundRect(ctx, CGRect(x: 6, y: 20, width: 318, height: 16), 3, fill: t.frameBottom.mixed(with: .black, 0.08), stroke: t.frameBorder.opacity(0.5))
             }
         case "equalizer.png": return equalizerBackground()
@@ -269,11 +269,11 @@ struct BuiltInPainter {
         case "lrc.png": return pill("LRC", CGSize(width: 22, height: 11))
         case "eq.png": return pill("EQ", CGSize(width: 22, height: 11))
         case "pl.png": return pill("PL", CGSize(width: 22, height: 11))
-        case "mode_single.png": return pill("单曲", CGSize(width: 26, height: 12), chinese: true)
-        case "mode_circle.png": return pill("循环", CGSize(width: 26, height: 12), chinese: true)
-        case "mode_slider.png": return pill("顺序", CGSize(width: 26, height: 12), chinese: true)
-        case "mode_loop.png": return pill("单循", CGSize(width: 26, height: 12), chinese: true)
-        case "mode_random.png": return pill("随机", CGSize(width: 26, height: 12), chinese: true)
+        case "mode_single.png": return pill(String(localized: "单曲"), CGSize(width: 26, height: 12), chinese: true)
+        case "mode_circle.png": return pill(String(localized: "循环"), CGSize(width: 26, height: 12), chinese: true)
+        case "mode_slider.png": return pill(String(localized: "顺序"), CGSize(width: 26, height: 12), chinese: true)
+        case "mode_loop.png": return pill(String(localized: "单循"), CGSize(width: 26, height: 12), chinese: true)
+        case "mode_random.png": return pill(String(localized: "随机"), CGSize(width: 26, height: 12), chinese: true)
         case "led.png": return led()
         case "progress_bar.png": return groove(CGSize(width: 314, height: 10), thickness: 4, filled: false)
         case "progress_fill.png": return groove(CGSize(width: 314, height: 10), thickness: 4, filled: true)
@@ -281,9 +281,9 @@ struct BuiltInPainter {
         case "volume_bar.png": return groove(CGSize(width: 76, height: 10), thickness: 4, filled: false)
         case "volume_fill.png": return groove(CGSize(width: 76, height: 10), thickness: 4, filled: true)
         case "volume_thumb.png": return knob(CGSize(width: 10, height: 10))
-        case "eq_enabled.png": return textButton("开启", CGSize(width: 38, height: 14))
-        case "eq_profile.png": return textButton("预设", CGSize(width: 38, height: 14))
-        case "eq_reset.png": return textButton("重置", CGSize(width: 38, height: 14))
+        case "eq_enabled.png": return textButton(String(localized: "开启"), CGSize(width: 38, height: 14))
+        case "eq_profile.png": return textButton(String(localized: "预设"), CGSize(width: 38, height: 14))
+        case "eq_reset.png": return textButton(String(localized: "重置"), CGSize(width: 38, height: 14))
         case "balance_bar.png": return groove(CGSize(width: 70, height: 8), thickness: 3, filled: false, centerTick: true)
         case "balance_fill.png": return groove(CGSize(width: 70, height: 8), thickness: 3, filled: true)
         case "surround_bar.png": return groove(CGSize(width: 40, height: 8), thickness: 3, filled: false)
@@ -387,16 +387,16 @@ struct BuiltInPainter {
         return canvas(s.width, s.height) { ctx in
             frame(ctx, s)
             appIcon(ctx, CGRect(x: 6, y: 3, width: 13, height: 13))
-            title(ctx, "均衡器", x: 23, y: 3.5)
-            drawText(ctx, "平衡", at: CGPoint(x: 150, y: 23), size: 8, color: t.titleText)
-            drawText(ctx, "环绕", at: CGPoint(x: 256, y: 23), size: 8, color: t.titleText)
+            title(ctx, String(localized: "均衡器"), x: 23, y: 3.5)
+            drawText(ctx, String(localized: "平衡"), at: CGPoint(x: 150, y: 23), size: 8, color: t.titleText)
+            drawText(ctx, String(localized: "skin.eq.surround", defaultValue: "环绕"), at: CGPoint(x: 256, y: 23), size: 8, color: t.titleText)
             panel(ctx, CGRect(x: 8, y: 40, width: 315, height: 90))
             let freqs = ["31", "62", "125", "250", "500", "1K", "2K", "4K", "8K", "16K"]
             for (i, f) in freqs.enumerated() {
                 let x = 62 + CGFloat(i) * 26 + 7
                 drawText(ctx, f, at: CGPoint(x: x, y: 119), size: 6.5, color: t.lcdDim, align: .center)
             }
-            drawText(ctx, "前置", at: CGPoint(x: 21, y: 119), size: 6.5, color: t.lcdDim, align: .center)
+            drawText(ctx, String(localized: "前置"), at: CGPoint(x: 21, y: 119), size: 6.5, color: t.lcdDim, align: .center)
             for (label, y) in [("+12", 46.0), ("0", 78.0), ("-12", 110.0)] {
                 drawText(ctx, label, at: CGPoint(x: 56, y: y), size: 6, color: t.lcdDim, align: .right)
             }

@@ -131,7 +131,7 @@ struct PlaybackLogView: View {
 
     var body: some View {
         ScrollView {
-            Text(text.isEmpty ? "还没有记录" : text)
+            Text(text.isEmpty ? String(localized: "还没有记录") : text)
                 .font(.system(.caption, design: .monospaced))
                 .textSelection(.enabled)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -144,7 +144,7 @@ struct PlaybackLogView: View {
             ToolbarItemGroup(placement: .primaryAction) {
                 Button("复制", systemImage: "doc.on.doc") {
                     UIPasteboard.general.string = text
-                    app.show("已复制播放日志")
+                    app.show(String(localized: "已复制播放日志"))
                 }
                 Button("清空", systemImage: "trash") {
                     PlaybackLog.clear()

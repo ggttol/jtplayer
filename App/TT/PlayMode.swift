@@ -8,11 +8,11 @@ enum PlayMode: Int, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .single: "单曲播放"
-        case .repeatOne: "单曲循环"
-        case .sequential: "顺序播放"
-        case .loop: "循环播放"
-        case .random: "随机播放"
+        case .single: String(localized: "单曲播放")
+        case .repeatOne: String(localized: "单曲循环")
+        case .sequential: String(localized: "顺序播放")
+        case .loop: String(localized: "循环播放")
+        case .random: String(localized: "随机播放")
         }
     }
 

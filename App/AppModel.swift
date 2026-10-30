@@ -93,7 +93,7 @@ final class AppModel {
             showPlaylist = false
             showLyrics = false
             miniRestore = restore
-            show("迷你模式，再点一次恢复")
+            show(String(localized: "迷你模式，再点一次恢复"))
         } else {
             showLyrics = true
             showPlaylist = true
@@ -112,7 +112,7 @@ final class AppModel {
 
     /// 换下一套皮肤
     func nextSkin() {
-        if let next = skins.next() { show("皮肤：\(next.name)") }
+        if let next = skins.next() { show(String(localized: "皮肤：\(next.name)")) }
     }
 
     /// 退出多选并清空选择
@@ -185,14 +185,14 @@ final class AppModel {
                 }
             }
             if !fm.fileExists(atPath: target.path) {
-                do { try fm.copyItem(at: url, to: target) } catch { show("导入失败：\(error.localizedDescription)"); continue }
+                do { try fm.copyItem(at: url, to: target) } catch { show(String(localized: "导入失败：\(error.localizedDescription)")); continue }
             }
             tracks.append(Track(sourceID: SourceConfig.localID, path: "/Imported/\(target.lastPathComponent)", title: Track.title(fromFileName: target.lastPathComponent)))
         }
         guard !tracks.isEmpty else { return }
         library.add(tracks)
         player.enqueue(tracks, playIfIdle: play)
-        show("已添加 \(tracks.count) 首")
+        show(String(localized: "已添加 \(tracks.count) 首"))
     }
 
     /// 处理“用 JTplayer 打开”的文件：皮肤或播放列表
@@ -201,16 +201,16 @@ final class AppModel {
         if ext == "skn" || ext == "zip" {
             do {
                 let entry = try skins.importSkin(from: url)
-                show("已切换到皮肤 \(entry.name)")
+                show(String(localized: "已切换到皮肤 \(entry.name)"))
             } catch {
-                show("不是有效的皮肤文件")
+                show(String(localized: "不是有效的皮肤文件"))
             }
         } else if ["m3u", "m3u8", "pls"].contains(ext) {
             let access = url.startAccessingSecurityScopedResource()
             defer { if access { url.stopAccessingSecurityScopedResource() } }
             if let tracks = try? library.loadPlaylist(url), !tracks.isEmpty {
                 player.setQueue(tracks, startAt: 0, autoplay: false)
-                show("已载入 \(tracks.count) 首")
+                show(String(localized: "已载入 \(tracks.count) 首"))
             }
         } else if AudioFormats.isPlayable(url.lastPathComponent) {
             importAudioFiles([url], play: true)
