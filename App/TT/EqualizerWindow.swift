@@ -67,20 +67,12 @@ struct EqualizerWindow: View {
         .frame(width: size.width * scale, height: size.height * scale, alignment: .topLeading)
     }
 
-    /// “预设”按钮弹出菜单：经典预设 + 新式音效
+    /// “预设”按钮直接打开音效（里面有经典均衡器预设）
     private func presets(_ e: TTElement) -> some View {
-        Menu {
-            Button("音效…", systemImage: "sparkles") { app.sheet = .effects }
-            Divider()
-            ForEach(EqualizerPreset.builtIn) { preset in
-                Button(preset.name) {
-                    player.applyPreset(preset)
-                    app.show("均衡器：\(preset.name)")
-                }
-            }
-        } label: {
+        Button { app.sheet = .effects } label: {
             if let image = skin.image(e.image) { TTImageView(image: image.frame(0, of: 4)) } else { Color.clear }
         }
+        .buttonStyle(.plain)
         .frame(width: e.rect.width * scale, height: e.rect.height * scale, alignment: .topLeading)
         .hitSlop(5)
         .accessibilityLabel("均衡器预设")
