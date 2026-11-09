@@ -105,11 +105,12 @@ struct PlaylistWindow: View {
                 Button("全选") { app.isSelecting = true; app.selection = Set(player.queue.tracks.indices) }
                 Button("反选") { app.isSelecting = true; app.selection = Set(player.queue.tracks.indices).subtracting(app.selection) }
                 Button("离线下载所选", systemImage: "arrow.down.circle") {
-                    makeOffline(app.selection.sorted().map { player.queue.tracks[$0] })
+                    makeOffline(app.selection.sorted().filter { player.queue.tracks.indices.contains($0) }.map { player.queue.tracks[$0] })
                 }
                 .disabled(app.selection.isEmpty)
                 Button("曲目信息", systemImage: "info.circle") {
-                    if let i = app.selection.min() ?? player.queue.currentIndex { infoTrack = player.queue.tracks[i] }
+                    if let i = app.selection.filter({ player.queue.tracks.indices.contains($0) }).min() ?? player.queue.currentIndex,
+                       player.queue.tracks.indices.contains(i) { infoTrack = player.queue.tracks[i] }
                 }
                 .disabled(player.queue.isEmpty)
             }

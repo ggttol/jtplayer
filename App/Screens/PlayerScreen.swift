@@ -19,15 +19,16 @@ struct PlayerScreen: View {
             let listSkin = skin.image(doc.playlist.image) != nil ? skin : TTSkinStore.fallback
             let eqSize = eqSkin.image(eqSkin.document.equalizer.image)?.size ?? CGSize(width: 330, height: 134)
             // 每个窗口按自己的宽度铺满屏宽：可拉伸的窗口拉到和主窗口一样宽，用主窗口的比例
-            let W = geo.size.width
-            let mainScale = W / mainSize.width
+            // 尺寸为 0（刚出现、转屏中）或皮肤缺图时不除以 0：算出无穷大再转整数会闪退
+            let W = max(geo.size.width, 1)
+            let mainScale = W / max(mainSize.width, 1)
             let lyricWidth = width(of: lyricSkin.document.lyric, in: lyricSkin, main: skin, mainWidth: mainSize.width)
             let listWidth = width(of: listSkin.document.playlist, in: listSkin, main: skin, mainWidth: mainSize.width)
-            let eqScale = W / eqSize.width
+            let eqScale = W / max(eqSize.width, 1)
             let lower = app.showLyrics || app.showPlaylist
             // 高度放不下（iPad 横屏）时整体缩小
             let fixedHeight = mainSize.height * mainScale + (app.showEqualizer ? eqSize.height * eqScale : 0)
-            let fit = min(1, geo.size.height / (fixedHeight + (lower ? 160 : 0)))
+            let fit = min(1, max(geo.size.height, 1) / max(fixedHeight + (lower ? 160 : 0), 1))
             let rest = max(0, geo.size.height - fixedHeight * fit)
             let lyricScale = W / lyricWidth * fit, listScale = W / listWidth * fit
             let lyricPoints = app.showLyrics ? (app.showPlaylist ? max(110, (rest * 0.4).rounded(.down)) : rest) : 0
